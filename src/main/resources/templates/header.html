@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="header">
+    <style>
+        .header {
+            background: #2c3e50;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+            display: inline-block;
+            font-size: 1.8em;
+        }
+        .tabs {
+            float: right;
+            display: flex;
+            gap: 10px;
+        }
+        .tab {
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-size: 1.1em;
+            transition: background 0.3s;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .tab.active {
+            background: #3498db;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .header h1 { display: block; text-align: center; margin-bottom: 15px; }
+            .tabs { float: none; justify-content: center; }
+        }
+    </style>
+
+    <div class="header">
+        <h1>Админ-панель стоматологии</h1>
+        <div class="tabs">
+            <a th:href="@{/admin/orders}"
+               th:classappend="${#request.requestURI.endsWith('/admin/orders') ? 'active' : ''} tab">
+                Ожидающие
+            </a>
+            <a th:href="@{/admin/completed}"
+               th:classappend="${#request.requestURI.endsWith('/admin/completed') ? 'active' : ''} tab">
+                Итоговые
+            </a>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>
+</html>

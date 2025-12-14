@@ -20,7 +20,7 @@ public class User {
     private String phone;
     private String fullName;
     private BigDecimal totalSpent = BigDecimal.ZERO;
-    private int discountPercent = 0;
+    private Integer toothPoints = 0;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders;

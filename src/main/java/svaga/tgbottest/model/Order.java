@@ -26,4 +26,5 @@ public class Order {
     private LocalDateTime confirmedAt;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    private LocalDateTime completedAt;
 }

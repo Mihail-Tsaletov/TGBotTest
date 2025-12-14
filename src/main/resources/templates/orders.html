@@ -4,138 +4,129 @@
     <meta charset="UTF-8">
     <title>Заявки на подтверждение</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
+        /* Шапка */
+        .header {
+            background: #2c3e50;
             padding: 20px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-
-        .container {
-            max-width: 1200px;
+        .header-content {
+            max-width: 1300px;
             margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        .card-header {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-
-        .info {
-            margin: 8px 0;
-            color: #555;
-        }
-
-        .buttons {
-            margin-top: 20px;
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
         }
-
-        .btn-cancel {
-            background: #e74c3c;
+        .tabs {
+            display: flex;
+            gap: 15px;
+        }
+        .tab {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            text-decoration: none;
             color: white;
+            font-size: 1.1em;
+            transition: background 0.3s;
         }
-
-        .btn-confirm {
-            background: #27ae60;
-            color: white;
+        .tab:hover {
+            background: rgba(255,255,255,0.25);
         }
-
-        .btn-save {
-            background: #2980b9;
-            color: white;
+        .tab.active {
+            background: #3498db;
+            font-weight: bold;
         }
-
-        .edit-form {
-            margin-top: 20px;
-            display: none;
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .tabs { margin-top: 15px; }
         }
-
-        .edit-form.show {
-            display: block;
-        }
-
-        input, button {
-            margin: 10px 0;
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-        }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 25px; }
+        .card { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 25px; }
+        .card-header { font-size: 1.3em; font-weight: bold; color: #2c3e50; margin-bottom: 15px; }
+        .info { margin: 10px 0; font-size: 1.1em; }
+        .info strong { color: #34495e; }
+        .buttons { margin-top: 25px; display: flex; gap: 15px; flex-wrap: wrap; }
+        button { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        .btn-cancel { background: #e74c3c; color: white; }
+        .btn-confirm { background: #27ae60; color: white; }
+        .btn-save { background: #2980b9; color: white; }
+        .edit-form { display: none; margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 8px; }
+        .edit-form.show { display: block; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #2c3e50; }
+        .form-group input { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .no-records { text-align: center; font-size: 1.6em; color: #7f8c8d; margin-top: 60px; }
     </style>
 </head>
 <body>
+<div class="header">
+    <div class="header-content">
+        <h1>Админ-панель стоматологии</h1>
+        <div class="tabs">
+            <a class="tab" th:href="@{/admin/orders}"
+               th:classappend="${currentPage == 'orders'} ? 'active' : ''">Ожидающие</a>
+            <a class="tab" th:href="@{/admin/completed}"
+               th:classappend="${currentPage == 'completed'} ? 'active' : ''">Итоговые</a>
+        </div>
+    </div>
+</div>
 <div class="container">
     <h1>Ожидающие подтверждения заявки</h1>
 
     <div class="cards" th:unless="${orders.isEmpty()}">
         <div class="card" th:each="order : ${orders}">
             <div class="card-header">Заявка #<span th:text="${order.id}"></span></div>
-            <div class="info"><strong>Пользователь:</strong> <span th:text="${order.user.fullName} ?: 'Не указано'">Не указано</span>
-            </div>
-            <div class="info"><strong>Телефон:</strong> <span
-                    th:text="${order.user.phone} ?: 'Не указан'">Не указан</span></div>
+
+            <div class="info"><strong>Пациент:</strong> <span th:text="${order.user.fullName} ?: 'Не указано'"></span></div>
+            <div class="info"><strong>Телефон:</strong> <span th:text="${order.user.phone} ?: 'Не указан'"></span></div>
             <div class="info"><strong>Telegram ID:</strong> <span th:text="${order.user.chatId}"></span></div>
             <div class="info">
                 <strong>Дата создания:</strong>
                 <span th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm') : 'Неизвестно'}">
-    Неизвестно
+                    Неизвестно
                 </span>
             </div>
+
             <div class="buttons">
-                <form th:action="@{'/admin/order/' + ${order.id} + '/cancel'}" method="post" style="display:inline;">
+                <!-- Отмена -->
+                <form th:action="@{|/admin/order/${order.id}/cancel|}" method="post" style="display:inline;">
                     <button type="submit" class="btn-cancel">Отменить</button>
                 </form>
-                <button type="button" class="btn-confirm" th:onclick="'showEditForm(' + ${order.id} + ')'">Подтвердить
+
+                <!-- Подтвердить — раскрывает форму -->
+                <button type="button" class="btn-confirm" th:onclick="|showEditForm(${order.id})|">
+                    Подтвердить
                 </button>
             </div>
 
-            <!-- Форма редактирования -->
-            <div class="edit-form" th:id="'edit-form-' + ${order.id}">
-                <form th:action="@{'/admin/order/' + ${order.id} + '/confirm'}" method="post">
-                    <label>ФИО врача:</label>
-                    <input type="text" name="doctor" required placeholder="Иванов И.И."/>
-
-                    <label>Дата и время приёма:</label>
-                    <input type="datetime-local" name="appointmentDate" required/>
-
-                    <label>Стоимость (₽):</label>
-                    <input type="number" step="0.01" name="price" required placeholder="5000.00" value="5000"/>
-
+            <!-- Форма подтверждения (врач + дата/время) -->
+            <div class="edit-form" th:id="|edit-form-${order.id}|">
+                <form th:action="@{|/admin/order/${order.id}/confirm|}" method="post">
+                    <div class="form-group">
+                        <label>ФИО врача</label>
+                        <input type="text" name="doctor" required placeholder="Иванов И.И." />
+                    </div>
+                    <div class="form-group">
+                        <label>Дата и время приёма</label>
+                        <input type="datetime-local" name="appointmentDate" required />
+                    </div>
                     <button type="submit" class="btn-save">Сохранить и подтвердить</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <div th:if="${orders.isEmpty()}" style="text-align: center; font-size: 1.5em; color: #777; margin-top: 50px;">
+    <div class="no-records" th:if="${orders.isEmpty()}">
         Нет заявок на подтверждение
     </div>
 </div>
