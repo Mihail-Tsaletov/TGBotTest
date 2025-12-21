@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -41,8 +42,16 @@ public class OrderService {
         return orderRepository.findByStatus("pending");
     }
 
+    public List<Order> getAllVariablePendingOrders() {
+        return orderRepository.findByStatusInOrderByCreatedAtAsc(List.of("pending", "pending_cancel", "pending_reschedule"));
+    }
+
     public void cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
+        if (!Set.of("pending_cancel", "pending_reschedule", "confirmed").contains(order.getStatus())) {
+            throw new IllegalStateException("Можно отменять только подходящие записи");
+        }
+
         order.setStatus("cancelled");
         orderRepository.save(order);
 
@@ -205,8 +214,8 @@ public class OrderService {
     public void rescheduleAppointment(Long orderId, Long doctorId, LocalDateTime newAppointmentDate) {
         Order order = orderRepository.findById(orderId).orElseThrow();
 
-        if (!"confirmed".equals(order.getStatus())) {
-            throw new IllegalStateException("Переносить можно только подтверждённые записи");
+        if (!Set.of("pending_cancel", "pending_reschedule", "confirmed").contains(order.getStatus())) {
+            throw new IllegalStateException("Можно переносить только подходящие записи");
         }
 
         LocalDateTime oldDate = order.getAppointmentDate();
@@ -219,6 +228,7 @@ public class OrderService {
             order.setDoctor(newDoctor);
         }
 
+        order.setStatus("confirmed");
         orderRepository.save(order);
 
         String newDoctorName = order.getDoctor() != null ? order.getDoctor().getFullName() : "Любой врач";

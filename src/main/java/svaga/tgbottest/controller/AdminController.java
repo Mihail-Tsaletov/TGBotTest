@@ -1,13 +1,16 @@
 package svaga.tgbottest.controller;
 
+import lombok.val;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import svaga.tgbottest.DTO.BroadcastResult;
 import svaga.tgbottest.DTO.OrderView;
 import svaga.tgbottest.model.Order;
 import svaga.tgbottest.repository.DoctorRepository;
 import svaga.tgbottest.repository.OrderRepository;
+import svaga.tgbottest.service.BroadcastService;
 import svaga.tgbottest.service.OrderService;
 import svaga.tgbottest.service.ToothService;
 
@@ -22,12 +25,14 @@ import java.util.List;
 public class AdminController {
 
     private final OrderService orderService;
+    private final BroadcastService broadcastService;
     private final OrderRepository orderRepository;
     private final DoctorRepository doctorRepository;
     private final ToothService toothService;
 
-    public AdminController(OrderService orderService, OrderRepository orderRepository, DoctorRepository doctorRepository, ToothService toothService) {
+    public AdminController(OrderService orderService, BroadcastService broadcastService, OrderRepository orderRepository, DoctorRepository doctorRepository, ToothService toothService) {
         this.orderService = orderService;
+        this.broadcastService = broadcastService;
         this.orderRepository = orderRepository;
         this.doctorRepository = doctorRepository;
         this.toothService = toothService;
@@ -35,7 +40,7 @@ public class AdminController {
 
     @GetMapping("/orders")
     public String showPendingOrders(Model model) {
-        List<Order> orders = orderService.getPendingOrders();
+        List<Order> orders = orderService.getAllVariablePendingOrders();
         List<OrderView> orderViews = orders.stream()
                 .map(order -> new OrderView(order, toothService.getActiveBalance(order.getUser())))
                 .toList();
@@ -45,7 +50,7 @@ public class AdminController {
         return "orders";
     }
 
-    @GetMapping("/orders/fragment")
+/*    @GetMapping("/orders/fragment")
     public String ordersFragment(Model model) {
         List<Order> orders = orderService.getPendingOrders();
 
@@ -56,7 +61,7 @@ public class AdminController {
         model.addAttribute("orders", orderViews);
         model.addAttribute("doctors", doctorRepository.findAllByOrderByFullNameAsc());
         return "orders :: ordersListFragment";
-    }
+    }*/
 
     @PostMapping("/order/{id}/cancel")
     public String cancelOrder(@PathVariable Long id) {
@@ -142,5 +147,34 @@ public class AdminController {
         if (phone != null && !phone.isBlank()) redirect += "?phone=" + phone;
         if (date != null) redirect += (redirect.contains("?") ? "&" : "?") + "date=" + date;
         return redirect;
+    }
+
+    @GetMapping("/broadcast")
+    public String showBroadcastPage(Model model) {
+        return "broadcast";
+    }
+
+    @PostMapping("/broadcast/send")
+    public String sendBroadcast(
+            @RequestParam String message,
+            @RequestParam(required = false, defaultValue = "all") String mode,
+            @RequestParam(required = false) String phoneList,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate broadcastDate,
+            Model model) {
+
+        try {
+            BroadcastResult result = broadcastService.sendBroadcast(message, mode, phoneList, broadcastDate);
+
+            model.addAttribute("success",
+                    "Рассылка завершена! Отправлено: " + result.sent +
+                            (result.failed > 0 ? " | Не удалось: " + result.failed : "") +
+                            " (всего: " + result.total + ")");
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            model.addAttribute("error", "Произошла ошибка при отправке: " + e.getMessage());
+        }
+
+        return "broadcast";
     }
 }

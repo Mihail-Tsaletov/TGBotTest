@@ -12,6 +12,8 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByStatus(String status);
+    List<Order> findByStatusInOrderByCreatedAtAsc(List<String> statuses);
+
     @Query("SELECT o FROM Order o " +
             "WHERE o.status = 'confirmed' " +
             "AND DATE(o.appointmentDate) = :date " +
@@ -27,5 +29,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findConfirmedByAppointmentDateAndPhone(
             @Param("date") LocalDate date,
             @Param("phonePattern") String phonePattern);
+
+
 
 }

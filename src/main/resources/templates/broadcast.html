@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Рассылка сообщений</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; margin: 0; }
+    .header { background: #2c3e50; padding: 20px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .header-content { max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { margin: 0; font-size: 1.8em; }
+    .tabs { display: flex; gap: 15px; }
+    .tab { padding: 12px 30px; background: rgba(255,255,255,0.15); border-radius: 8px; text-decoration: none; color: white; font-size: 1.1em; }
+    .tab.active { background: #3498db; font-weight: bold; }
+    .container { max-width: 1000px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #2c3e50; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; font-weight: bold; }
+    textarea { width: 100%; height: 150px; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 8px; }
+    input[type="date"] { padding: 12px; font-size: 16px; }
+    .mode-selector { margin: 20px 0; }
+    .mode-option { margin: 15px 0; }
+    button { padding: 14px 30px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; }
+    .alert { padding: 15px; border-radius: 8px; margin: 20px 0; }
+    .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
+</head>
+<body>
+<!-- ШАПКА С ВКЛАДКАМИ -->
+<div class="header">
+  <div class="header-content">
+    <h1>Админ-панель стоматологии</h1>
+    <div class="tabs">
+      <a class="tab" th:href="@{/admin/orders}"
+         th:classappend="${currentPage == 'orders'} ? 'active' : ''">Ожидающие</a>
+      <a class="tab" th:href="@{/admin/completed}"
+         th:classappend="${currentPage == 'completed'} ? 'active' : ''">Итоговые</a>
+      <a class="tab" th:href="@{/admin/broadcast}"
+         th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Рассылка</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <h1>Рассылка сообщений пациентам</h1>
+
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+  <form th:action="@{/admin/broadcast/send}" method="post">
+    <div class="form-group">
+      <label>Текст сообщения</label>
+      <textarea name="message" required placeholder="Введите текст рассылки..."></textarea>
+    </div>
+
+    <div class="mode-selector">
+      <div class="mode-option">
+        <label>
+          <input type="radio" name="mode" value="all" checked />
+          <strong>Всем пациентам</strong> (все пользователи в базе)
+        </label>
+      </div>
+
+      <div class="mode-option">
+        <label>
+          <input type="radio" name="mode" value="by_date" />
+          <strong>Пациентам, записанным на дату:</strong>
+          <input type="date" name="broadcastDate" />
+        </label>
+      </div>
+
+      <div class="mode-option">
+        <label>
+          <input type="radio" name="mode" value="by_phone" />
+          <strong>По номерам телефонов</strong> (введите через запятую, пробел или с новой строки):
+          <textarea name="phoneList" rows="5" placeholder="79991234567&#10;79997654321&#10;89185551234"></textarea>
+        </label>
+      </div>
+    </div>
+
+    <button type="submit">Отправить рассылку</button>
+  </form>
+</div>
+</body>
+</html>

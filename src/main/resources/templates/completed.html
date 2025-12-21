@@ -82,6 +82,8 @@
          th:classappend="${currentPage == 'orders'} ? 'active' : ''">Ожидающие</a>
       <a class="tab" th:href="@{/admin/completed}"
          th:classappend="${currentPage == 'completed'} ? 'active' : ''">Итоговые</a>
+      <a class="tab" th:href="@{/admin/broadcast}"
+         th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Рассылка</a>
     </div>
   </div>
 </div>

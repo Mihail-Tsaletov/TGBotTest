@@ -53,6 +53,9 @@
         .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 25px; }
         .card { background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 25px; }
         .card-header { font-size: 1.3em; font-weight: bold; color: #2c3e50; margin-bottom: 15px; }
+        .card-header.new { background: #e8f5e8; } /* новая заявка */
+        .card-header.cancel { background: #ffebee; color: #c62828; } /* запрос на отмену */
+        .card-header.reschedule { background: #fff3e0; color: #ef6c00; } /* запрос на перенос */
         .info { margin: 10px 0; font-size: 1.1em; }
         .info strong { color: #34495e; }
         .buttons { margin-top: 25px; display: flex; gap: 15px; flex-wrap: wrap; }
@@ -77,6 +80,8 @@
                th:classappend="${currentPage == 'orders'} ? 'active' : ''">Ожидающие</a>
             <a class="tab" th:href="@{/admin/completed}"
                th:classappend="${currentPage == 'completed'} ? 'active' : ''">Итоговые</a>
+            <a class="tab" th:href="@{/admin/broadcast}"
+               th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Рассылка</a>
         </div>
     </div>
 </div>
@@ -85,40 +90,66 @@
 
     <div class="cards" th:unless="${orders.isEmpty()}">
         <div class="card" th:each="order : ${orders}">
-            <div class="card-header">Заявка #<span th:text="${order.id}"></span></div>
+            <!-- Заголовок с цветом в зависимости от статуса -->
+            <div class="card-header new"
+                 th:text="${order.status == 'pending_cancel'
+                ? 'Запрос на отмену записи'
+                : (order.status == 'pending_reschedule'
+                   ? 'Запрос на перенос записи'
+                   : 'Новая заявка на запись')} + ' #' + ${order.id}">
+                Новая заявка
+            </div>
 
+            <!-- Общие данные -->
             <div class="info"><strong>Пациент:</strong> <span th:text="${order.user.fullName} ?: 'Не указано'"></span></div>
             <div class="info"><strong>Телефон:</strong> <span th:text="${order.user.phone} ?: 'Не указан'"></span></div>
+            <div class="info" th:if="${order.appointmentDate != null}">
+                <strong>Текущая запись:</strong>
+                <span th:text="${#temporals.format(order.appointmentDate, 'dd.MM.yyyy HH:mm')}"></span>
+                у <span th:text="${order.doctor?.fullName} ?: 'Любой врач'"></span>
+            </div>
             <div class="info">
                 <strong>Дата создания:</strong>
                 <span th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm') : 'Неизвестно'}">
-                    Неизвестно
-                </span>
+                        Неизвестно
+                    </span>
             </div>
 
+            <!-- Кнопки в зависимости от статуса -->
             <div class="buttons">
-                <!-- Отмена -->
-                <form th:action="@{|/admin/order/${order.id}/cancel|}" method="post" style="display:inline;">
-                    <button type="submit" class="btn-cancel">Отменить</button>
-                </form>
+                <!-- Запрос на отмену -->
+                <th:block th:if="${order.status == 'pending_cancel'}">
+                    <form th:action="@{|/admin/order/${order.id}/cancel|}" method="post" style="display:inline;">
+                        <button type="submit" class="btn-cancel">Отменить запись</button>
+                    </form>
+                    <button type="button" class="btn-confirm" th:onclick="|showRescheduleForm(${order.id})|">
+                        Перенести запись
+                    </button>
+                </th:block>
 
-                <!-- Подтвердить — раскрывает форму -->
-                <button type="button" class="btn-confirm" th:onclick="|showEditForm(${order.id})|">
-                    Подтвердить
-                </button>
+                <!-- Запрос на перенос -->
+                <th:block th:if="${order.status == 'pending_reschedule'}">
+                    <button type="button" class="btn-confirm" th:onclick="|showRescheduleForm(${order.id})|">
+                        Подтвердить перенос
+                    </button>
+                </th:block>
+
+                <!-- Обычная новая заявка -->
+                <th:block th:if="${order.status == 'pending'}">
+                    <button type="button" class="btn-confirm" th:onclick="|showEditForm(${order.id})|">
+                        Подтвердить запись
+                    </button>
+                </th:block>
             </div>
 
-            <!-- Форма подтверждения (врач + дата/время) -->
+            <!-- Форма подтверждения новой заявки (для pending) -->
             <div class="edit-form" th:id="|edit-form-${order.id}|">
                 <form th:action="@{|/admin/order/${order.id}/confirm|}" method="post">
                     <div class="form-group">
                         <label>Врач</label>
                         <select name="doctorId" required>
                             <option value="">-- Выберите врача --</option>
-                            <option th:each="doc : ${doctors}"
-                                    th:value="${doc.id}"
-                                    th:text="${doc.fullName}">
-                            </option>
+                            <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.fullName}"></option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -128,17 +159,39 @@
                     <button type="submit" class="btn-save">Сохранить и подтвердить</button>
                 </form>
             </div>
+
+            <!-- Форма переноса (для pending_cancel и pending_reschedule) -->
+            <div class="edit-form" th:id="|reschedule-form-${order.id}|">
+                <form th:action="@{|/admin/reschedule/${order.id}|}" method="post">
+                    <div class="form-group">
+                        <label>Новый врач</label>
+                        <select name="doctorId" required>
+                            <option value="">-- Выберите врача --</option>
+                            <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.fullName}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Новая дата и время приёма</label>
+                        <input type="datetime-local" name="newAppointmentDate" required />
+                    </div>
+                    <button type="submit" class="btn-save">Сохранить перенос</button>
+                </form>
+            </div>
         </div>
     </div>
 
     <div class="no-records" th:if="${orders.isEmpty()}">
-        Нет заявок на подтверждение
+        Нет заявок на обработку
     </div>
 </div>
 
 <script>
     function showEditForm(orderId) {
         document.getElementById('edit-form-' + orderId).classList.add('show');
+    }
+
+    function showRescheduleForm(orderId) {
+        document.getElementById('reschedule-form-' + orderId).classList.add('show');
     }
 </script>
 </body>
