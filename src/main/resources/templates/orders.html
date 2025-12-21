@@ -89,7 +89,6 @@
 
             <div class="info"><strong>Пациент:</strong> <span th:text="${order.user.fullName} ?: 'Не указано'"></span></div>
             <div class="info"><strong>Телефон:</strong> <span th:text="${order.user.phone} ?: 'Не указан'"></span></div>
-            <div class="info"><strong>Telegram ID:</strong> <span th:text="${order.user.chatId}"></span></div>
             <div class="info">
                 <strong>Дата создания:</strong>
                 <span th:text="${order.createdAt != null ? #temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm') : 'Неизвестно'}">
@@ -113,8 +112,14 @@
             <div class="edit-form" th:id="|edit-form-${order.id}|">
                 <form th:action="@{|/admin/order/${order.id}/confirm|}" method="post">
                     <div class="form-group">
-                        <label>ФИО врача</label>
-                        <input type="text" name="doctor" required placeholder="Иванов И.И." />
+                        <label>Врач</label>
+                        <select name="doctorId" required>
+                            <option value="">-- Выберите врача --</option>
+                            <option th:each="doc : ${doctors}"
+                                    th:value="${doc.id}"
+                                    th:text="${doc.fullName}">
+                            </option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Дата и время приёма</label>

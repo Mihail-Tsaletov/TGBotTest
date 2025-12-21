@@ -19,7 +19,9 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private String doctor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
     private LocalDateTime appointmentDate;
     private BigDecimal price;
     private String status = "pending";

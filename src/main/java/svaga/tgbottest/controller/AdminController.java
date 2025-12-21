@@ -1,20 +1,18 @@
 package svaga.tgbottest.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import svaga.tgbottest.DTO.OrderView;
 import svaga.tgbottest.model.Order;
+import svaga.tgbottest.repository.DoctorRepository;
 import svaga.tgbottest.repository.OrderRepository;
 import svaga.tgbottest.service.OrderService;
-import svaga.tgbottest.service.TelegramService;
+import svaga.tgbottest.service.ToothService;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,16 +23,39 @@ public class AdminController {
 
     private final OrderService orderService;
     private final OrderRepository orderRepository;
+    private final DoctorRepository doctorRepository;
+    private final ToothService toothService;
 
-    public AdminController(OrderService orderService, OrderRepository orderRepository) {
+    public AdminController(OrderService orderService, OrderRepository orderRepository, DoctorRepository doctorRepository, ToothService toothService) {
         this.orderService = orderService;
         this.orderRepository = orderRepository;
+        this.doctorRepository = doctorRepository;
+        this.toothService = toothService;
     }
 
     @GetMapping("/orders")
     public String showPendingOrders(Model model) {
-        model.addAttribute("orders", orderService.getPendingOrders());
-        return "/orders";
+        List<Order> orders = orderService.getPendingOrders();
+        List<OrderView> orderViews = orders.stream()
+                .map(order -> new OrderView(order, toothService.getActiveBalance(order.getUser())))
+                .toList();
+
+        model.addAttribute("orders", orderViews);
+        model.addAttribute("doctors", doctorRepository.findAllByOrderByFullNameAsc());
+        return "orders";
+    }
+
+    @GetMapping("/orders/fragment")
+    public String ordersFragment(Model model) {
+        List<Order> orders = orderService.getPendingOrders();
+
+        List<OrderView> orderViews = orders.stream()
+                .map(order -> new OrderView(order, toothService.getActiveBalance(order.getUser())))
+                .toList();
+
+        model.addAttribute("orders", orderViews);
+        model.addAttribute("doctors", doctorRepository.findAllByOrderByFullNameAsc());
+        return "orders :: ordersListFragment";
     }
 
     @PostMapping("/order/{id}/cancel")
@@ -46,12 +67,11 @@ public class AdminController {
     @PostMapping("/order/{id}/confirm")
     public String confirmOrder(
             @PathVariable Long id,
-            @RequestParam String doctor,
+            @RequestParam Long doctorId,
             @RequestParam("appointmentDate") String dateTimeStr)
             throws ParseException {
         LocalDateTime appointmentDate = LocalDateTime.parse(dateTimeStr);
-
-        orderService.confirmOrder(id, doctor, appointmentDate);
+        orderService.confirmOrder(id, doctorId, appointmentDate);
         return "redirect:/admin/orders";
     }
 
@@ -71,10 +91,16 @@ public class AdminController {
             orders = orderRepository.findConfirmedByAppointmentDate(searchDate);
         }
 
-        model.addAttribute("orders", orders);
+        // Преобразуем в DTO с рассчитанным балансом зубиков
+        List<OrderView> orderViews = orders.stream()
+                .map(order -> new OrderView(order, toothService.getActiveBalance(order.getUser())))
+                .toList();
+
+        model.addAttribute("orders", orderViews);
         model.addAttribute("searchDate", searchDate);
         model.addAttribute("phone", phone);
-        return "/completed";
+        model.addAttribute("doctors", doctorRepository.findAllByOrderByFullNameAsc());
+        return "completed";
     }
 
     @PostMapping("/complete/{id}")
@@ -82,10 +108,16 @@ public class AdminController {
             @PathVariable Long id,
             @RequestParam BigDecimal price,
             @RequestParam(required = false) String phone,
+            @RequestParam(required = false) Boolean cleaning,
+            @RequestParam(required = false) Boolean whitening,
+            @RequestParam(required = false) Boolean extraction,
             @RequestParam(required = false) LocalDate date,
             @RequestParam(required = false, defaultValue = "0") Integer usedToothPoints) {
 
-        orderService.completeOrder(id, price, usedToothPoints);
+        orderService.completeOrder(id, price, usedToothPoints,
+                Boolean.TRUE.equals(cleaning),
+                Boolean.TRUE.equals(whitening),
+                Boolean.TRUE.equals(extraction));
 
         // Возврат на ту же страницу с параметрами поиска
         String redirect = "redirect:/admin/completed";
@@ -97,15 +129,14 @@ public class AdminController {
     @PostMapping("/reschedule/{id}")
     public String rescheduleOrder(
             @PathVariable Long id,
-            @RequestParam String doctor,
+            @RequestParam(required = false) Long doctorId,
             @RequestParam("newAppointmentDate") String newDateTimeStr,
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) LocalDate date) throws ParseException {
 
         LocalDateTime newAppointmentDate = LocalDateTime.parse(newDateTimeStr);
 
-        orderService.rescheduleAppointment(id, doctor.isBlank() ? null : doctor, newAppointmentDate);
-
+        orderService.rescheduleAppointment(id, doctorId, newAppointmentDate);
         // Редирект с сохранением фильтров
         String redirect = "redirect:/admin/completed";
         if (phone != null && !phone.isBlank()) redirect += "?phone=" + phone;

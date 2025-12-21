@@ -113,12 +113,12 @@
 
       <div class="info"><strong>Пациент:</strong> <span th:text="${order.user.fullName} ?: 'Не указано'"></span></div>
       <div class="info"><strong>Телефон:</strong> <span th:text="${order.user.phone} ?: 'Не указан'"></span></div>
-      <div class="info"><strong>Врач:</strong> <span th:text="${order.doctor} ?: 'Любой'"></span></div>
+      <div class="info"><strong>Врач:</strong> <span th:text="${order.doctor?.fullName} ?: 'Любой'">Любой</span></div>
       <div class="info"><strong>Время приёма:</strong>
         <span th:text="${#temporals.format(order.appointmentDate, 'dd.MM.yyyy HH:mm')}"></span>
       </div>
       <div class="info" style="font-size: 1.2em; color: #27ae60; font-weight: bold;">
-        Баланс зубиков: <span th:text="${order.user.toothPoints}">0</span> 🦷
+        Баланс зубиков: <span th:text="${order.activeToothBalance}">0</span> 🦷
       </div>
 
       <div class="actions">
@@ -129,8 +129,26 @@
             <input type="number" step="0.01" name="price" required placeholder="5000.00" />
           </div>
           <div class="form-group">
-            <label>Использовать зубиков (доступно: <span th:text="${order.user.toothPoints}">0</span>)</label>
-            <input type="number" min="0" th:max="${order.user.toothPoints}" name="usedToothPoints" value="0" />
+            <label>Использовать зубиков (доступно: <span th:text="${order.activeToothBalance}">0</span>)</label>
+            <input type="number" min="0" th:max="${order.activeToothBalance}" name="usedToothPoints" value="0" />
+          </div>
+          <div class="form-group">
+            <label style="font-weight: bold; color: #2c3e50;">Выполненные процедуры (отметьте, если были):</label>
+
+            <label style="display: block; margin: 10px 0; font-weight: normal;">
+              <input type="checkbox" name="cleaning" value="true" />
+              Чистка
+            </label>
+
+            <label style="display: block; margin: 10px 0; font-weight: normal;">
+              <input type="checkbox" name="whitening" value="true" />
+              Отбеливание
+            </label>
+
+            <label style="display: block; margin: 10px 0; font-weight: normal;">
+              <input type="checkbox" name="extraction" value="true" />
+              Удаление
+            </label>
           </div>
           <input type="hidden" name="phone" th:value="${phone}" />
           <input type="hidden" name="date" th:value="${searchDate}" />
@@ -149,7 +167,20 @@
           <form th:action="@{'/admin/reschedule/' + ${order.id}}" method="post">
             <div class="form-group">
               <label>Новый врач (оставьте пустым — без изменений)</label>
-              <input type="text" name="doctor" th:placeholder="${order.doctor}" />
+              <select name="doctorId">
+                <!-- Текущий врач выбран по умолчанию -->
+                <option th:value="${order.doctor != null ? order.doctor.id : ''}"
+                        th:selected="${order.doctor != null}"
+                        th:text="${order.doctor != null ? order.doctor.fullName : '— Любой врач —'}">
+                  — Любой врач —
+                </option>
+                <!-- Все доступные врачи -->
+                <option th:each="doc : ${doctors}"
+                        th:value="${doc.id}"
+                        th:text="${doc.fullName}"
+                        th:disabled="${order.doctor != null and doc.id == order.doctor.id}">
+                </option>
+              </select>
             </div>
             <div class="form-group">
               <label>Новая дата и время приёма</label>

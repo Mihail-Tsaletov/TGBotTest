@@ -1,7 +1,9 @@
 package svaga.tgbottest.service;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,5 +31,12 @@ public class TelegramService {
         } else {
             log.info("Отправка сообщения успешна: {}, ответ {}", text, response.description());
         }
+    }
+
+    public void sendPhoto(Long chatId, String fileId, String caption) {
+        SendPhoto sendPhoto = new SendPhoto(chatId.toString(), fileId);
+        sendPhoto.caption(caption);
+        sendPhoto.parseMode(ParseMode.HTML);
+        bot.execute(sendPhoto);
     }
 }

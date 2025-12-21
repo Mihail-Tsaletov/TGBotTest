@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -20,7 +21,6 @@ public class User {
     private String phone;
     private String fullName;
     private BigDecimal totalSpent = BigDecimal.ZERO;
-    private Integer toothPoints = 0;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders;
