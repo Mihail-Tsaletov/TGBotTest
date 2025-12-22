@@ -48,7 +48,7 @@ public class OrderService {
 
     public void cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
-        if (!Set.of("pending_cancel", "pending_reschedule", "confirmed").contains(order.getStatus())) {
+        if (!Set.of("pending_cancel", "pending_reschedule", "confirmed", "pending").contains(order.getStatus())) {
             throw new IllegalStateException("Можно отменять только подходящие записи");
         }
 

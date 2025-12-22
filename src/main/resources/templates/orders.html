@@ -136,6 +136,9 @@
 
                 <!-- Обычная новая заявка -->
                 <th:block th:if="${order.status == 'pending'}">
+                    <form th:action="@{|/admin/order/${order.id}/cancel|}" method="post" style="display:inline;">
+                        <button type="submit" class="btn-cancel">Отменить</button>
+                    </form>
                     <button type="button" class="btn-confirm" th:onclick="|showEditForm(${order.id})|">
                         Подтвердить запись
                     </button>
