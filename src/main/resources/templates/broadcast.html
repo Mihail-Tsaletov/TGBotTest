@@ -31,11 +31,11 @@
   <div class="header-content">
     <h1>Админ-панель стоматологии</h1>
     <div class="tabs">
-      <a class="tab" th:href="@{/admin/orders}"
+      <a class="tab" th:href="@{/tg/admin/orders}"
          th:classappend="${currentPage == 'orders'} ? 'active' : ''">Ожидающие</a>
-      <a class="tab" th:href="@{/admin/completed}"
+      <a class="tab" th:href="@{/tg/admin/completed}"
          th:classappend="${currentPage == 'completed'} ? 'active' : ''">Итоговые</a>
-      <a class="tab" th:href="@{/admin/broadcast}"
+      <a class="tab" th:href="@{/tg/admin/broadcast}"
          th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Рассылка</a>
     </div>
   </div>
@@ -47,7 +47,7 @@
   <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
   <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
-  <form th:action="@{/admin/broadcast/send}" method="post">
+  <form th:action="@{/tg/admin/broadcast/send}" method="post">
     <div class="form-group">
       <label>Текст сообщения</label>
       <textarea name="message" required placeholder="Введите текст рассылки..."></textarea>

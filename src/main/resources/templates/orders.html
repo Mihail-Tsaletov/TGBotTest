@@ -76,11 +76,11 @@
     <div class="header-content">
         <h1>Админ-панель стоматологии</h1>
         <div class="tabs">
-            <a class="tab" th:href="@{/admin/orders}"
+            <a class="tab" th:href="@{/tg/admin/orders}"
                th:classappend="${currentPage == 'orders'} ? 'active' : ''">Ожидающие</a>
-            <a class="tab" th:href="@{/admin/completed}"
+            <a class="tab" th:href="@{/tg/admin/completed}"
                th:classappend="${currentPage == 'completed'} ? 'active' : ''">Итоговые</a>
-            <a class="tab" th:href="@{/admin/broadcast}"
+            <a class="tab" th:href="@{/tg/admin/broadcast}"
                th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Рассылка</a>
         </div>
     </div>
@@ -119,7 +119,7 @@
             <div class="buttons">
                 <!-- Запрос на отмену -->
                 <th:block th:if="${order.status == 'pending_cancel'}">
-                    <form th:action="@{|/admin/order/${order.id}/cancel|}" method="post" style="display:inline;">
+                    <form th:action="@{|/tg/admin/order/${order.id}/cancel|}" method="post" style="display:inline;">
                         <button type="submit" class="btn-cancel">Отменить запись</button>
                     </form>
                     <button type="button" class="btn-confirm" th:onclick="|showRescheduleForm(${order.id})|">
@@ -136,7 +136,7 @@
 
                 <!-- Обычная новая заявка -->
                 <th:block th:if="${order.status == 'pending'}">
-                    <form th:action="@{|/admin/order/${order.id}/cancel|}" method="post" style="display:inline;">
+                    <form th:action="@{|/tg/admin/order/${order.id}/cancel|}" method="post" style="display:inline;">
                         <button type="submit" class="btn-cancel">Отменить</button>
                     </form>
                     <button type="button" class="btn-confirm" th:onclick="|showEditForm(${order.id})|">
@@ -147,7 +147,7 @@
 
             <!-- Форма подтверждения новой заявки (для pending) -->
             <div class="edit-form" th:id="|edit-form-${order.id}|">
-                <form th:action="@{|/admin/order/${order.id}/confirm|}" method="post">
+                <form th:action="@{|/tg/admin/order/${order.id}/confirm|}" method="post">
                     <div class="form-group">
                         <label>Врач</label>
                         <select name="doctorId" required>
@@ -165,7 +165,7 @@
 
             <!-- Форма переноса (для pending_cancel и pending_reschedule) -->
             <div class="edit-form" th:id="|reschedule-form-${order.id}|">
-                <form th:action="@{|/admin/reschedule/${order.id}|}" method="post">
+                <form th:action="@{|/tg/admin/reschedule/${order.id}|}" method="post">
                     <div class="form-group">
                         <label>Новый врач</label>
                         <select name="doctorId" required>

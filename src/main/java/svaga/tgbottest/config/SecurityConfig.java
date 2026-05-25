@@ -25,20 +25,20 @@ public class SecurityConfig {
                         .anyRequest().permitAll()  // Остальное — свободно (бот, API и т.д.)
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")                    // Кастомная страница логина
-                        .loginProcessingUrl("/login")           // POST сюда отправляет форму (по умолчанию)
-                        .defaultSuccessUrl("/admin/orders", true)  // После входа — в ожидающие
+                        .loginPage("/tg/login")                    // Кастомная страница логина
+                        .loginProcessingUrl("/tg/login")           // POST сюда отправляет форму (по умолчанию)
+                        .defaultSuccessUrl("/tg/admin/orders", true)  // После входа — в ожидающие
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutUrl("/tg/logout")
+                        .logoutSuccessUrl("/tg/login?logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/admin/broadcast/send")  // Если рассылка POST — можно отключить CSRF для неё
+                        .ignoringRequestMatchers("/tg/admin/broadcast/send")  // Если рассылка POST — можно отключить CSRF для неё
                 );
 
         return http.build();

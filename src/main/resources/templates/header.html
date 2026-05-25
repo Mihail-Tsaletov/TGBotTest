@@ -45,12 +45,12 @@
     <div class="header">
         <h1>Админ-панель стоматологии</h1>
         <div class="tabs">
-            <a th:href="@{/admin/orders}"
-               th:classappend="${#request.requestURI.endsWith('/admin/orders') ? 'active' : ''} tab">
+            <a th:href="@{/tg/admin/orders}"
+               th:classappend="${#request.requestURI.endsWith('/tg/admin/orders') ? 'active' : ''} tab">
                 Ожидающие
             </a>
-            <a th:href="@{/admin/completed}"
-               th:classappend="${#request.requestURI.endsWith('/admin/completed') ? 'active' : ''} tab">
+            <a th:href="@{/tg/admin/completed}"
+               th:classappend="${#request.requestURI.endsWith('/tg/admin/completed') ? 'active' : ''} tab">
                 Итоговые
             </a>
         </div>

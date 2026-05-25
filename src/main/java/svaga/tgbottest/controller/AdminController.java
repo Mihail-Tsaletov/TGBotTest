@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/tg/admin")
 public class AdminController {
 
     private final OrderService orderService;
