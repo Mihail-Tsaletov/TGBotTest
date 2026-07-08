@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление врачами</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; }
+        .header { background: #2c3e50; color: white; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .form-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .doctor-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .doctor-card img .doctor-card img { max-width: 100%; max-height: 300px; width: auto; border-radius: 8px;
+            object-fit: contain; display: block; margin: 12px auto;
+        }
+        .doctor-card video { max-width: 100%; border-radius: 8px; margin: 10px 0; }
+        .success { color: #27ae60; padding: 12px; background: #e8f5e8; border-radius: 6px; }
+        .error { color: #e74c3c; padding: 12px; background: #ffebee; border-radius: 6px; }
+    </style>
+</head>
+<body>
+<div class="header"><h1>Админ-панель — Врачи</h1></div>
+<div class="container">
+
+    <div class="form-card">
+        <h2>Добавить врача</h2>
+        <form th:action="@{/tg/admin/doctors}" method="post" enctype="multipart/form-data">
+            <label>ФИО врача:</label><br>
+            <input type="text" name="fullName" required style="width:100%; padding:10px; margin:8px 0;"><br>
+
+            <label>Фото врача (обязательно):</label><br>
+            <input type="file" name="photo" accept="image/*" required><br><br>
+
+            <label>Видео-визитка (необязательно):</label><br>
+            <input type="file" name="video" accept="video/*"><br><br>
+
+            <button type="submit" style="padding:12px 30px; background:#27ae60; color:white; border:none; border-radius:6px; font-size:16px;">
+                Добавить врача
+            </button>
+        </form>
+    </div>
+
+    <h2>Список врачей</h2>
+    <div class="doctors-grid">
+        <div class="doctor-card" th:each="doctor : ${doctors}">
+            <h3 th:text="${doctor.fullName}"></h3>
+
+            <div th:if="${doctor.photoUrl}">
+                <strong>Фото:</strong><br>
+                <img th:src="${doctor.photoUrl}" alt="Фото">
+            </div>
+
+            <div th:if="${doctor.videoUrl}">
+                <strong>Видео-визитка:</strong><br>
+                <video controls>
+                    <source th:src="${doctor.videoUrl}" type="video/mp4">
+                    Ваш браузер не поддерживает видео.
+                </video>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

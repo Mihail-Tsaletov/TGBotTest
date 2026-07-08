@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Table(name = "doctors")
 @Data
 public class Doctor {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,7 +16,6 @@ public class Doctor {
     private String fullName;
     @Column(name = "photo_url", nullable = false)
     private String photoUrl;
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
+    @Column(name = "video_url")
+    private String videoUrl;
 }

@@ -5,14 +5,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import svaga.tgbottest.DTO.BroadcastResult;
 import svaga.tgbottest.DTO.OrderView;
 import svaga.tgbottest.model.Order;
 import svaga.tgbottest.repository.DoctorRepository;
 import svaga.tgbottest.repository.OrderRepository;
-import svaga.tgbottest.service.BroadcastService;
-import svaga.tgbottest.service.OrderService;
-import svaga.tgbottest.service.ToothService;
+import svaga.tgbottest.service.*;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -29,13 +29,17 @@ public class AdminController {
     private final OrderRepository orderRepository;
     private final DoctorRepository doctorRepository;
     private final ToothService toothService;
+    private final DoctorService doctorService;
+    private final FileStorageService fileStorageService;
 
-    public AdminController(OrderService orderService, BroadcastService broadcastService, OrderRepository orderRepository, DoctorRepository doctorRepository, ToothService toothService) {
+    public AdminController(OrderService orderService, BroadcastService broadcastService, OrderRepository orderRepository, DoctorRepository doctorRepository, ToothService toothService, DoctorService doctorService, FileStorageService fileStorageService) {
         this.orderService = orderService;
         this.broadcastService = broadcastService;
         this.orderRepository = orderRepository;
         this.doctorRepository = doctorRepository;
         this.toothService = toothService;
+        this.doctorService = doctorService;
+        this.fileStorageService = fileStorageService;
     }
 
     @GetMapping("/orders")
@@ -48,6 +52,24 @@ public class AdminController {
         model.addAttribute("orders", orderViews);
         model.addAttribute("doctors", doctorRepository.findAllByOrderByFullNameAsc());
         return "orders";
+    }
+
+    @GetMapping("/doctors")
+    public String showDoctors(Model model) {
+        model.addAttribute("doctors", doctorRepository.findAllByOrderByFullNameAsc());
+        return "doctors";
+    }
+
+    @PostMapping("/admin/doctors")
+    public String createDoctor(
+            @RequestParam String fullName,
+            @RequestParam MultipartFile photo,
+            @RequestParam(required = false) MultipartFile video,
+            RedirectAttributes redirectAttributes) {
+
+        doctorService.createDoctor(fullName, photo, video, redirectAttributes);
+
+        return "redirect:/tg/admin/doctors";
     }
 
 /*    @GetMapping("/orders/fragment")

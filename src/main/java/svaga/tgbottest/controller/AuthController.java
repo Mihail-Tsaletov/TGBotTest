@@ -12,6 +12,6 @@ public class AuthController {
 
     @GetMapping("/tg")
     public String home() {
-        return "redirect:/admin/orders";
+        return "redirect:/tg/admin/orders";
     }
 }

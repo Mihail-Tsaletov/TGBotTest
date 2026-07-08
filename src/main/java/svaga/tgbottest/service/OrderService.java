@@ -82,6 +82,9 @@ public class OrderService {
         String fileId = doctor.getPhotoUrl();
         if (fileId != null && !fileId.isBlank()) {
             telegramService.sendPhoto(order.getUser().getChatId(), fileId, message);
+            if (doctor.getVideoUrl() != null) {
+                telegramService.sendVideo(order.getUser().getChatId(), doctor.getVideoUrl(), "Видео-визитка врача");
+            }
         } else {
             telegramService.sendMessage(order.getUser().getChatId(), message);
         }
