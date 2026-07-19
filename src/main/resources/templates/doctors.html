@@ -4,22 +4,150 @@
     <meta charset="UTF-8">
     <title>Управление врачами</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; }
-        .header { background: #2c3e50; color: white; padding: 20px; text-align: center; margin-bottom: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        .form-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
-        .doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .doctor-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .doctor-card img .doctor-card img { max-width: 100%; max-height: 300px; width: auto; border-radius: 8px;
-            object-fit: contain; display: block; margin: 12px auto;
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 20px;
         }
-        .doctor-card video { max-width: 100%; border-radius: 8px; margin: 10px 0; }
+        .header {
+            background: #2c3e50;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .header-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        .tabs {
+            display: flex;
+            gap: 15px;
+        }
+        .tab {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            font-size: 1.1em;
+            transition: background 0.3s;
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        .tab.active {
+            background: #3498db;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; text-align: center; }
+            .tabs { margin-top: 15px; }
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 25px;
+        }
+        .doctor-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .edit-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .edit-btn:hover { background: #2980b9; }
+        .photo-container, .video-container {
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 12px 0;
+            overflow: hidden;
+        }
+        .doctor-card img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        .doctor-card video {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+        }
+        .edit-form {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .edit-form.show { display: block; }
         .success { color: #27ae60; padding: 12px; background: #e8f5e8; border-radius: 6px; }
         .error { color: #e74c3c; padding: 12px; background: #ffebee; border-radius: 6px; }
     </style>
 </head>
 <body>
-<div class="header"><h1>Админ-панель — Врачи</h1></div>
+
+<!-- ШАПКА С ВКЛАДКАМИ -->
+<div class="header">
+    <div class="header-content">
+        <h1>Админ-панель стоматологии</h1>
+        <div class="tabs">
+            <a class="tab" th:href="@{/tg/admin/orders}"
+               th:classappend="${currentPage == 'orders'} ? 'active' : ''">Ожидающие</a>
+            <a class="tab" th:href="@{/tg/admin/completed}"
+               th:classappend="${currentPage == 'completed'} ? 'active' : ''">Итоговые</a>
+            <a class="tab" th:href="@{/tg/admin/broadcast}"
+               th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Рассылка</a>
+            <a class="tab" th:href="@{/tg/admin/doctors}"
+               th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Врачи</a>
+        </div>
+    </div>
+</div>
+
 <div class="container">
 
     <div class="form-card">
@@ -43,22 +171,49 @@
     <h2>Список врачей</h2>
     <div class="doctors-grid">
         <div class="doctor-card" th:each="doctor : ${doctors}">
-            <h3 th:text="${doctor.fullName}"></h3>
+            <button class="edit-btn" th:onclick="|toggleEdit(${doctor.id})|">✏️</button>
+
+            <h3 th:text="${doctor.fullName}" th:id="|name-${doctor.id}|"></h3>
 
             <div th:if="${doctor.photoUrl}">
                 <strong>Фото:</strong><br>
-                <img th:src="${doctor.photoUrl}" alt="Фото">
+                <div class="photo-container">
+                    <img th:src="${doctor.photoUrl}" alt="Фото врача" th:id="|photo-img-${doctor.id}|">
+                </div>
             </div>
 
             <div th:if="${doctor.videoUrl}">
                 <strong>Видео-визитка:</strong><br>
-                <video controls>
-                    <source th:src="${doctor.videoUrl}" type="video/mp4">
-                    Ваш браузер не поддерживает видео.
-                </video>
+                <div class="video-container">
+                    <video controls th:id="|video-player-${doctor.id}|">
+                        <source th:src="${doctor.videoUrl}" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+
+            <!-- Форма редактирования -->
+            <div class="edit-form" th:id="|edit-form-${doctor.id}|">
+                <form th:action="@{/tg/admin/doctors/{id}/update(id=${doctor.id})}" method="post" enctype="multipart/form-data">
+                    <label>Новое ФИО:</label><br>
+                    <input type="text" name="fullName" th:value="${doctor.fullName}" required style="width:100%; padding:8px; margin:8px 0;"><br>
+
+                    <label>Новое фото (оставь пустым, чтобы не менять):</label><br>
+                    <input type="file" name="photo" accept="image/*"><br><br>
+
+                    <label>Новое видео (оставь пустым, чтобы не менять):</label><br>
+                    <input type="file" name="video" accept="video/*"><br><br>
+
+                    <button type="submit" style="padding:10px 20px; background:#f39c12; color:white; border:none; border-radius:6px;">Сохранить изменения</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function toggleEdit(id) {
+        document.getElementById('edit-form-' + id).classList.toggle('show');
+    }
+</script>
 </body>
 </html>

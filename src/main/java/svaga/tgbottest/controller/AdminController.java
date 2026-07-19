@@ -15,6 +15,10 @@ import svaga.tgbottest.repository.OrderRepository;
 import svaga.tgbottest.service.*;
 
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -60,7 +64,7 @@ public class AdminController {
         return "doctors";
     }
 
-    @PostMapping("/admin/doctors")
+    @PostMapping("/doctors")
     public String createDoctor(
             @RequestParam String fullName,
             @RequestParam MultipartFile photo,
@@ -69,6 +73,23 @@ public class AdminController {
 
         doctorService.createDoctor(fullName, photo, video, redirectAttributes);
 
+        return "redirect:/tg/admin/doctors";
+    }
+
+    @PostMapping("/doctors/{id}/update")
+    public String updateDoctor(
+            @PathVariable Long id,
+            @RequestParam String fullName,
+            @RequestParam(required = false) MultipartFile photo,
+            @RequestParam(required = false) MultipartFile video,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            doctorService.updateDoctor(id, fullName, photo, video, redirectAttributes);
+            redirectAttributes.addFlashAttribute("success", "Врач обновлён!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка обновления");
+        }
         return "redirect:/tg/admin/doctors";
     }
 
@@ -88,7 +109,7 @@ public class AdminController {
     @PostMapping("/order/{id}/cancel")
     public String cancelOrder(@PathVariable Long id) {
         orderService.cancelOrder(id);
-        return "redirect:/admin/orders";
+        return "redirect:/tg/admin/orders";
     }
 
     @PostMapping("/order/{id}/confirm")
@@ -99,7 +120,7 @@ public class AdminController {
             throws ParseException {
         LocalDateTime appointmentDate = LocalDateTime.parse(dateTimeStr);
         orderService.confirmOrder(id, doctorId, appointmentDate);
-        return "redirect:/admin/orders";
+        return "redirect:/tg/admin/orders";
     }
 
     @GetMapping("/completed")
@@ -147,7 +168,7 @@ public class AdminController {
                 Boolean.TRUE.equals(extraction));
 
         // Возврат на ту же страницу с параметрами поиска
-        String redirect = "redirect:/admin/completed";
+        String redirect = "redirect:/tg/admin/completed";
         if (phone != null && !phone.isBlank()) redirect += "?phone=" + phone;
         if (date != null) redirect += (redirect.contains("?") ? "&" : "?") + "date=" + date;
         return redirect;
@@ -165,7 +186,7 @@ public class AdminController {
 
         orderService.rescheduleAppointment(id, doctorId, newAppointmentDate);
         // Редирект с сохранением фильтров
-        String redirect = "redirect:/admin/completed";
+        String redirect = "redirect:/tg/admin/completed";
         if (phone != null && !phone.isBlank()) redirect += "?phone=" + phone;
         if (date != null) redirect += (redirect.contains("?") ? "&" : "?") + "date=" + date;
         return redirect;
@@ -198,5 +219,39 @@ public class AdminController {
         }
 
         return "broadcast";
+    }
+
+    @GetMapping("/test-proxy")
+    @ResponseBody
+    public String testProxy() {
+        StringBuilder sb = new StringBuilder("=== Тест SOCKS5 Прокси ===\n\n");
+
+        try {
+            // Для Docker + host.docker.internal
+            Proxy proxy = new Proxy(Proxy.Type.SOCKS,
+                    new InetSocketAddress("172.18.0.1", 1080));
+
+            sb.append("1. Прокси создан (host.docker.internal:1080)\n");
+
+            URL url = new URL("https://api.telegram.org"); // IP api.telegram.org
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(15000);
+            conn.setRequestMethod("HEAD");
+
+            int responseCode = conn.getResponseCode();
+
+            sb.append("2. Соединение успешно!\n");
+            sb.append("Код ответа: ").append(responseCode).append("\n");
+            sb.append("Время: ").append(new java.util.Date());
+
+        } catch (Exception e) {
+            sb.append("❌ Ошибка: ")
+                    .append(e.getClass().getSimpleName())
+                    .append("\nСообщение: ")
+                    .append(e.getMessage());
+        }
+
+        return sb.toString();
     }
 }

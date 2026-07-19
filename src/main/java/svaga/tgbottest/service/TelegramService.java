@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.nio.file.Path;
 
 @Service
@@ -20,11 +22,15 @@ public class TelegramService {
 
     private final TelegramBot bot;
     private final Long chatId;
+
     @Autowired
     private FileStorageService fileStorageService;
 
     public TelegramService(@Value("${bot-token}") String botToken,
                            @Value("${chat-id}") Long chatId) {
+
+        Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", 1080));
+
         this.bot = new TelegramBot(botToken);
         this.chatId = chatId;
     }
@@ -39,11 +45,12 @@ public class TelegramService {
         }
     }
 
-    public void sendPhoto(Long chatId, String fileId, String caption) {
-        SendPhoto sendPhoto = new SendPhoto(chatId.toString(), fileId);
+    public void sendPhoto(Long chatId, String photoUrl, String caption) {
+        Path photoPath = fileStorageService.getFilePath(photoUrl);
+        SendPhoto sendPhoto = new SendPhoto(chatId.toString(), photoPath.toFile());
         sendPhoto.caption(caption);
         sendPhoto.parseMode(ParseMode.HTML);
-        bot.execute(sendPhoto);
+        bot.execute(sendPhoto);  // лучше проверять ответ как в sendMessage
     }
 
     public void sendVideo(Long chatId, String videoUrl, String caption) {
