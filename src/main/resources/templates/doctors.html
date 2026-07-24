@@ -71,7 +71,7 @@
         .doctor-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 60px 20px 20px 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             position: relative;
             display: flex;
@@ -81,20 +81,40 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: #3498db;
-            color: white;
-            border: none;
+            background: #f4f4f4;
+            color: #555;
+            border: 1px solid #d5d5d5;
             width: 36px;
             height: 36px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
-        .edit-btn:hover { background: #2980b9; }
+        .edit-btn:hover { background: #e6e6e6; }
+        .edit-btn svg { width: 18px; height: 18px; }
+        .delete-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #fff;
+            color: #c0392b;
+            border: 1px solid #e6b3b3;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 0;
+        }
+        .delete-btn:hover { background: #ffebee; }
         .photo-container, .video-container {
             height: 280px;
             display: flex;
@@ -129,6 +149,52 @@
         .error { color: #e74c3c; padding: 12px; background: #ffebee; border-radius: 6px; }
     </style>
 </head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script>
+    (function () {
+        function connectNotifications() {
+            const socket = new SockJS('/ws');
+            const stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function (frame) {
+                console.log('Connected to WebSocket');
+                stompClient.subscribe('/topic/new-orders', function (message) {
+                    try {
+                        const data = JSON.parse(message.body);
+                        showNewOrderToast(data);
+                    } catch (e) {
+                        console.error('Parse error', e);
+                    }
+                });
+            }, function (error) {
+                console.error('STOMP error', error);
+                setTimeout(connectNotifications, 5000);
+            });
+        }
+
+        window.addEventListener('load', connectNotifications);
+
+        function showNewOrderToast(data) {
+            const toast = document.createElement('div');
+            toast.textContent = '🦷 Новая заявка №' + data.orderId;
+            toast.style.cssText =
+                'position:fixed;bottom:20px;right:20px;background:#27ae60;color:#fff;' +
+                'padding:16px 24px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.25);' +
+                'z-index:9999;font-size:16px;font-family:Arial,sans-serif;cursor:pointer;' +
+                'transition:opacity 0.3s;';
+            toast.onclick = function () {
+                window.location.href = '/tg/admin/orders';
+            };
+            document.body.appendChild(toast);
+
+            setTimeout(function () {
+                toast.style.opacity = '0';
+                setTimeout(function () { toast.remove(); }, 300);
+            }, 8000);
+        }
+    })();
+</script>
 <body>
 
 <!-- ШАПКА С ВКЛАДКАМИ -->
@@ -143,7 +209,7 @@
             <a class="tab" th:href="@{/tg/admin/broadcast}"
                th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Рассылка</a>
             <a class="tab" th:href="@{/tg/admin/doctors}"
-               th:classappend="${currentPage == 'broadcast'} ? 'active' : ''">Врачи</a>
+               th:classappend="${currentPage == 'doctors'} ? 'active' : ''">Врачи</a>
         </div>
     </div>
 </div>
@@ -171,7 +237,20 @@
     <h2>Список врачей</h2>
     <div class="doctors-grid">
         <div class="doctor-card" th:each="doctor : ${doctors}">
-            <button class="edit-btn" th:onclick="|toggleEdit(${doctor.id})|">✏️</button>
+            <form th:action="@{/tg/admin/doctors/{id}/delete(id=${doctor.id})}" method="post"
+                  th:attr="data-doctor-name=${doctor.fullName}"
+                  onsubmit="return confirm('Удалить врача ' + this.dataset.doctorName + '? Все его заявки тоже будут удалены безвозвратно.')"
+                  style="display:inline;">
+                <button type="submit" class="delete-btn" title="Удалить врача">✕</button>
+            </form>
+
+            <button class="edit-btn" type="button" th:onclick="|toggleEdit(${doctor.id})|" title="Редактировать">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                </svg>
+            </button>
 
             <h3 th:text="${doctor.fullName}" th:id="|name-${doctor.id}|"></h3>
 

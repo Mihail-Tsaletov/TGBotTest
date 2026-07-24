@@ -31,5 +31,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("phonePattern") String phonePattern);
 
 
-
+    void deleteAllByDoctorId(Long id);
 }

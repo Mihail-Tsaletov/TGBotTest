@@ -76,6 +76,13 @@ public class AdminController {
         return "redirect:/tg/admin/doctors";
     }
 
+    @PostMapping("/doctors/{id}/delete")
+    public String deleteDoctor(@PathVariable Long id) {
+        orderRepository.deleteAllByDoctorId(id);   // сначала каскадом сносим заявки
+        doctorRepository.deleteById(id);           // потом самого врача
+        return "redirect:/tg/admin/doctors";
+    }
+
     @PostMapping("/doctors/{id}/update")
     public String updateDoctor(
             @PathVariable Long id,

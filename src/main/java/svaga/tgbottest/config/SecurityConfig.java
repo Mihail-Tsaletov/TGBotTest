@@ -20,7 +20,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").authenticated()  // Только авторизованные в админку
+                        .requestMatchers("/tg/admin/**").authenticated()  // Только авторизованные в админку
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().permitAll()  // Остальное — свободно (бот, API и т.д.)
                 )
@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/tg/admin/broadcast/send")  // Если рассылка POST — можно отключить CSRF для неё
+                        .ignoringRequestMatchers("/tg/admin/broadcast/send", "/tg/internal/**")
                 );
 
         return http.build();
