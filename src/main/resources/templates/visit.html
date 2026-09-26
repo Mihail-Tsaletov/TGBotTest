@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glow Dental — Сияй ярче, улыбайся смелее</title>
+  <link rel="icon" type="image/png" href="/uploads/doctors/photos/brand/logo-mark-green.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===================================================================
+       Фирменные цвета и шрифты — по гайдлайну Glow Dental (Гайдлайн_Glow_Dental.pdf):
+       #303c30 основной зелёный, #f5f0ea кремовый, #dad2bf бежевый,
+       #4f4138 тёмно-коричневый, #564f3f коричнево-серый, #c5bcab бежево-серый.
+       Заголовки — Anticva Regular (в гайде), для веба заменена на близкий по духу
+       антикву-засечку с полной поддержкой кириллицы — Cormorant Garamond.
+       Основной текст — Montserrat, как указано в гайдлайне.
+       =================================================================== */
+    :root{
+      --green-deep:#303c30;
+      --green-mid:#435343;
+      --green-line:#4c5f4c;
+      --cream:#f5f0ea;
+      --cream-soft:#dad2bf;
+      --ink:#4f4138;
+      --ink-soft:#6b5e50;
+      --accent:#564f3f;
+      --accent-soft:#c5bcab;
+      --card-dark:#232b21;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{
+      background:var(--cream);
+      color:var(--ink);
+      font-family:'Montserrat',sans-serif;
+      font-weight:400;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    h1,h2,h3,.serif{
+      font-family:'Cormorant Garamond',serif;
+      font-weight:500;
+      color:var(--green-deep);
+      line-height:1.15;
+    }
+    a{color:inherit;text-decoration:none;}
+    img{display:block;max-width:100%;}
+    .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+
+    /* logomark — фирменный знак (лого_зел / лого_беж) + название бренда,
+       как показано в гайдлайне: используются вместе или отдельно */
+    .logomark{display:inline-flex;align-items:center;gap:10px;}
+    .logomark img{width:30px;height:auto;flex:none;}
+    .logomark span{
+      font-family:'Cormorant Garamond',serif;
+      font-size:20px;letter-spacing:0.14em;
+      color:var(--green-deep);
+    }
+    .logomark.on-dark span{color:var(--cream);}
+
+    /* nav */
+    header{
+      position:sticky;top:0;z-index:50;
+      background:rgba(245,240,234,0.92);
+      backdrop-filter:blur(6px);
+      border-bottom:1px solid rgba(48,60,48,0.12);
+    }
+    .nav-row{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:18px 0;
+    }
+    .nav-links{display:flex;gap:34px;align-items:center;}
+    .nav-links a{
+      font-size:15px;color:var(--ink-soft);
+      transition:color .2s ease;
+    }
+    .nav-links a:hover{color:var(--green-deep);}
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:12px 26px;
+      border-radius:2px;
+      font-size:15px;font-weight:600;
+      border:1px solid var(--green-deep);
+      transition:background .25s ease,color .25s ease,border-color .25s ease;
+      white-space:nowrap;
+    }
+    .btn-solid{background:var(--green-deep);color:var(--cream);}
+    .btn-solid:hover{background:var(--green-mid);}
+    .btn-line{background:transparent;color:var(--green-deep);}
+    .btn-line:hover{background:var(--green-deep);color:var(--cream);}
+    .btn-accent{border-color:var(--accent);color:var(--cream);background:var(--accent);}
+    .btn-accent:hover{background:var(--accent-soft);border-color:var(--accent-soft);}
+
+    .nav-cta{display:none;}
+    @media(min-width:860px){.nav-cta{display:inline-flex;}}
+    .nav-links{display:none;}
+    @media(min-width:860px){.nav-links{display:flex;}}
+    .nav-burger{display:inline-flex;font-size:14px;color:var(--green-deep);border:1px solid var(--green-deep);padding:10px 16px;border-radius:2px;}
+    @media(min-width:860px){.nav-burger{display:none;}}
+
+    /* hero */
+    .hero{padding:76px 0 0;overflow:hidden;}
+    .hero-grid{
+      display:grid;grid-template-columns:1fr;gap:56px;align-items:center;
+    }
+    @media(min-width:960px){
+      .hero-grid{grid-template-columns:1.05fr 0.95fr;gap:40px;}
+    }
+    .hero-eyebrow{
+      font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);font-weight:600;
+      margin-bottom:18px;
+    }
+    .hero h1{font-size:clamp(40px,6vw,68px);margin-bottom:26px;}
+    .hero p{max-width:46ch;font-size:18px;color:var(--ink-soft);margin-bottom:34px;}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:34px;}
+    .hero-badge{display:inline-flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-soft);}
+    .hero-badge b{color:var(--green-deep);font-weight:700;}
+
+    .hero-visual{
+      position:relative;
+      aspect-ratio:4/5;
+      max-width:420px;
+      margin:0 auto;
+    }
+    .hero-oval{
+      position:absolute;inset:0;
+      border-radius:50%;
+      background:var(--green-deep);
+      transform:scale(1.06);
+    }
+    .hero-visual img{
+      position:relative;
+      width:100%;height:100%;object-fit:cover;
+      border-radius:50%;
+      border:1px solid rgba(245,240,234,0.4);
+    }
+    .hero-visual .spark{position:absolute;color:var(--accent-soft);font-size:20px;}
+    .hero-visual .spark.s1{top:6%;right:10%;}
+    .hero-visual .spark.s2{bottom:10%;left:2%;}
+
+    /* section shell */
+    section{padding:96px 0;}
+    .section-head{max-width:640px;margin-bottom:56px;}
+    .section-head .kicker{font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:14px;}
+    .section-head h2{font-size:clamp(30px,4vw,44px);}
+    .section-head p{color:var(--ink-soft);margin-top:16px;font-size:17px;max-width:52ch;}
+
+    /* about */
+    .about{background:var(--cream-soft);}
+    .about-grid{
+      display:grid;grid-template-columns:1fr;gap:52px;align-items:center;
+    }
+    @media(min-width:900px){.about-grid{grid-template-columns:1fr 1fr;}}
+    .about-copy p{color:var(--ink-soft);margin-bottom:18px;font-size:17px;max-width:50ch;}
+    .about-figure{position:relative;border-radius:2px;overflow:hidden;}
+    .about-figure img{width:100%;height:100%;object-fit:cover;aspect-ratio:5/6;}
+    .rating-strip{
+      display:flex;gap:28px;flex-wrap:wrap;margin-top:34px;
+      padding-top:28px;border-top:1px solid rgba(48,60,48,0.18);
+    }
+    .rating-item .num{font-family:'Cormorant Garamond',serif;font-size:34px;color:var(--green-deep);}
+    .rating-item .label{font-size:13px;color:var(--ink-soft);}
+
+    /* services */
+    .services{
+      background:var(--green-deep);
+      color:var(--cream);
+      position:relative;
+    }
+    .services .section-head h2,.services .section-head p{color:var(--cream);}
+    .services .section-head p{color:rgba(245,240,234,0.72);}
+    .service-list{border-top:1px solid rgba(245,240,234,0.22);}
+    .service-row{
+      display:grid;grid-template-columns:1fr;gap:8px;
+      padding:30px 0;border-bottom:1px solid rgba(245,240,234,0.22);
+    }
+    @media(min-width:760px){
+      .service-row{grid-template-columns:280px 1fr;gap:40px;align-items:baseline;}
+    }
+    .service-row h3{color:var(--cream);font-size:26px;}
+    .service-row p{color:rgba(245,240,234,0.72);font-size:16px;max-width:56ch;}
+
+    /* gallery break */
+    .gallery-break{display:grid;grid-template-columns:1fr;gap:2px;}
+    @media(min-width:760px){.gallery-break{grid-template-columns:1.2fr 1fr;}}
+    .gallery-break img{width:100%;height:100%;object-fit:cover;min-height:280px;}
+
+    /* team */
+    .team-grid{
+      display:grid;grid-template-columns:1fr;gap:28px;
+    }
+    @media(min-width:640px){.team-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(min-width:960px){.team-grid{grid-template-columns:repeat(3,1fr);}}
+    .doctor-card{
+      background:var(--cream-soft);
+      border:1px solid rgba(48,60,48,0.14);
+    }
+    .doctor-photo{
+      aspect-ratio:4/5;
+      background:var(--green-deep);
+      overflow:hidden;
+    }
+    .doctor-photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .doctor-card .doctor-body{padding:22px 22px 26px;}
+    .doctor-card h3{font-size:22px;margin-bottom:4px;}
+
+    /* reviews */
+    .reviews{background:var(--cream-soft);}
+    .reviews-grid{
+      display:grid;grid-template-columns:1fr;gap:2px;
+      background:rgba(48,60,48,0.16);
+      border:1px solid rgba(48,60,48,0.16);
+      align-items:stretch;
+    }
+    @media(min-width:860px){.reviews-grid{grid-template-columns:repeat(3,1fr);}}
+
+    .review-card{
+      background:var(--cream-soft);
+      padding:34px 30px;
+      display:flex;
+      flex-direction:column;
+      height:100%;
+    }
+    .review-card .quote{
+      font-family:'Cormorant Garamond',serif;
+      font-size:21px;
+      color:var(--green-deep);
+      flex-grow:1;
+      margin-bottom:22px;
+    }
+    .review-card .author{
+      font-size:14px;
+      color:var(--ink-soft);
+      font-weight:600;
+      margin-top:auto;          /* всегда внизу */
+    }
+    .review-card .author span{
+      font-weight:400;
+      color:var(--ink-soft);
+      opacity:.75;
+    }
+
+    .review-badges{
+      display:flex;flex-wrap:wrap;gap:36px;margin-top:52px;
+      padding-top:34px;border-top:1px solid rgba(48,60,48,0.18);
+    }
+    .review-badges .num{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--green-deep);}
+    .review-badges .label{font-size:13px;color:var(--ink-soft);max-width:20ch;}
+
+    /* contact */
+    .contact{
+      background:var(--card-dark);
+      color:var(--cream);
+    }
+    .contact-grid{
+      display:grid;grid-template-columns:1fr;gap:48px;
+    }
+    @media(min-width:900px){.contact-grid{grid-template-columns:1fr 1fr;}}
+    .contact h2{color:var(--cream);font-size:clamp(30px,4vw,44px);margin-bottom:18px;}
+    .contact p.lead{color:rgba(245,240,234,0.72);font-size:17px;max-width:44ch;margin-bottom:8px;}
+    .contact-links{display:flex;flex-direction:column;gap:14px;margin-top:30px;}
+    .contact-link{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:18px 22px;border:1px solid rgba(245,240,234,0.25);
+      transition:border-color .2s ease,background .2s ease;
+    }
+    .contact-link:hover{border-color:var(--accent-soft);background:rgba(245,240,234,0.04);}
+    .contact-link .k{font-size:12px;letter-spacing:.04em;color:rgba(245,240,234,0.55);}
+    .contact-link .v{font-size:17px;font-family:'Cormorant Garamond',serif;}
+    .contact-info{border-left:1px solid rgba(245,240,234,0.2);padding-left:44px;}
+    @media(max-width:899px){.contact-info{border-left:none;padding-left:0;border-top:1px solid rgba(245,240,234,0.2);padding-top:34px;}}
+    .contact-info .row{margin-bottom:26px;}
+    .contact-info .k{font-size:12px;letter-spacing:.04em;color:rgba(245,240,234,0.55);margin-bottom:6px;}
+    .contact-info .v{font-size:18px;font-family:'Cormorant Garamond',serif;}
+
+    /* footer */
+    footer{
+      background:var(--card-dark);
+      border-top:1px solid rgba(245,240,234,0.14);
+      padding:34px 0;
+    }
+    .footer-row{
+      display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;
+    }
+    .footer-row .copy{font-size:13px;color:rgba(245,240,234,0.5);}
+    .footer-row .tag{font-size:13px;color:rgba(245,240,234,0.5);font-style:italic;font-family:'Cormorant Garamond',serif;}
+
+    /* ---------- цены ---------- */
+    .prices{background:var(--cream);}
+    .price-table{width:100%;border-collapse:collapse;font-size:15px;}
+    .price-table th{
+      text-align:left;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--accent);font-weight:600;padding:0 12px 14px 0;
+      border-bottom:1px solid rgba(48,60,48,0.25);
+    }
+    .price-table td{padding:18px 12px 18px 0;border-bottom:1px solid rgba(48,60,48,0.14);vertical-align:baseline;}
+    .price-table .price{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--green-deep);text-align:right;white-space:nowrap;padding-right:0;}
+    .price-table th:last-child{text-align:right;padding-right:0;}
+    @media(max-width:640px){
+      .price-table thead{display:none;}
+      .price-table tr{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:16px 0;border-bottom:1px solid rgba(48,60,48,0.14);}
+      .price-table td{border:none;padding:0;}
+    }
+    .price-note{margin-top:22px;font-size:13px;color:var(--ink-soft);max-width:70ch;}
+    .price-note a{color:var(--green-deep);text-decoration:underline;text-underline-offset:2px;}
+
+    /* ---------- виджет отзывов Яндекса ---------- */
+    .reviews-widget{display:none;height:720px;max-width:760px;margin:0 auto;overflow:hidden;border:1px solid rgba(48,60,48,0.16);background:#fff;}
+    .reviews-widget iframe{width:100%;height:100%;border:0;}
+    .reviews.has-widget .reviews-widget{display:block;}
+    .reviews.has-widget .reviews-grid{display:none;}
+
+    /* ---------- модалка записи + согласие ПД ---------- */
+    .modal{
+      position:fixed;inset:0;z-index:100;display:none;
+      align-items:center;justify-content:center;padding:16px;
+      background:rgba(35,43,33,0.6);backdrop-filter:blur(3px);
+    }
+    .modal.open{display:flex;}
+    .modal-card{
+      position:relative;width:100%;max-width:440px;
+      background:var(--cream);border-radius:24px;padding:40px 32px 32px;
+      box-shadow:0 20px 60px rgba(0,0,0,.25);
+    }
+    .modal-card::before{content:"";position:absolute;inset:8px;border:1px solid rgba(48,60,48,0.18);border-radius:18px;pointer-events:none;}
+    .modal-close{position:absolute;top:14px;right:18px;font-size:26px;line-height:1;color:var(--ink-soft);background:none;border:0;cursor:pointer;z-index:1;}
+    .modal-card h3{font-size:30px;margin-bottom:10px;}
+    .modal-card p{font-size:15px;color:var(--ink-soft);margin-bottom:22px;}
+    .consent{display:flex;align-items:flex-start;gap:12px;font-size:13px;line-height:1.5;color:var(--ink-soft);margin-bottom:24px;cursor:pointer;}
+    .consent input{
+      flex:none;appearance:none;-webkit-appearance:none;width:18px;height:18px;margin-top:1px;
+      border:1px solid var(--green-deep);border-radius:2px;background:transparent;display:grid;place-content:center;cursor:pointer;
+    }
+    .consent input::before{content:"";width:10px;height:10px;transform:scale(0);transition:transform .15s ease;background:var(--green-deep);clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0,43% 62%);}
+    .consent input:checked::before{transform:scale(1);}
+    .consent input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+    .consent a{color:var(--green-deep);text-decoration:underline;text-underline-offset:2px;}
+    .modal .btn{width:100%;justify-content:center;}
+    .modal .btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+    /* ---------- подвал: вся информация для пациентов ---------- */
+    .footer-info{
+      display:grid;grid-template-columns:1fr;gap:40px;
+      margin-top:34px;padding-top:34px;border-top:1px solid rgba(245,240,234,0.14);
+      font-size:13px;line-height:1.6;color:rgba(245,240,234,0.6);
+    }
+    @media(min-width:760px){.footer-info{grid-template-columns:repeat(2,1fr);}}
+    @media(min-width:1040px){.footer-info{grid-template-columns:1.1fr 1fr 1fr;}}
+    .footer-info h4{
+      font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--accent-soft);margin-bottom:14px;
+    }
+    .footer-info p{margin-bottom:10px;}
+    .footer-info b{color:rgba(245,240,234,0.85);font-weight:500;}
+    .footer-info ul{list-style:none;display:flex;flex-direction:column;gap:7px;}
+    .footer-info a{color:rgba(245,240,234,0.8);text-decoration:underline;text-decoration-color:rgba(245,240,234,0.3);text-underline-offset:3px;}
+    .footer-info a:hover{color:var(--cream);text-decoration-color:var(--cream);}
+    .footer-info details summary{cursor:pointer;color:rgba(245,240,234,0.8);list-style:none;}
+    .footer-info details summary::-webkit-details-marker{display:none;}
+    .footer-info details summary::before{content:"✦ ";color:var(--accent-soft);font-size:10px;}
+    .footer-info details[open] summary{margin-bottom:8px;}
+    .footer-info details div{padding-left:14px;border-left:1px solid rgba(245,240,234,0.18);}
+    .footer-info .org{margin-bottom:14px;}
+    .footer-bottom{
+      display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;align-items:center;
+      margin-top:34px;padding-top:22px;border-top:1px solid rgba(245,240,234,0.14);
+      font-size:12px;color:rgba(245,240,234,0.5);
+    }
+    .footer-bottom a{color:rgba(245,240,234,0.7);text-decoration:underline;text-underline-offset:2px;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav-row">
+    <a href="#top" class="logomark">
+      <img src="/uploads/doctors/photos/brand/logo-mark-green.png" alt="Glow Dental" width="30" height="37">
+      <span>Glow Dental</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#about">О клинике</a>
+      <a href="#services">Услуги</a>
+      <a href="#team">Команда</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#prices">Цены</a>
+      <a href="#info">Пациентам</a>
+    </nav>
+    <a href="#contacts" class="btn btn-solid nav-cta">Записаться</a>
+    <a href="#contacts" class="nav-burger">Записаться</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="hero-eyebrow">Стоматология в центре Ростова-на-Дону</div>
+        <h1>Сияй ярче,<br>улыбайся смелее</h1>
+        <p>Glow Dental — клиника, где лечение проходит спокойно и бережно: от первой чистки до сложной имплантации. Пациенты возвращаются к одним и тем же врачам годами — и приводят своих близких.</p>
+        <div class="hero-actions">
+          <a href="https://t.me/glowdentalbot" class="btn btn-solid js-tg" target="_blank" rel="noopener">Записаться в Telegram</a>
+          <a href="#contacts" class="btn btn-line">Позвонить</a>
+        </div>
+        <div class="hero-badge"><b>4,9 ★</b>&nbsp;рейтинг на Яндекс Картах</div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-oval"></div>
+        <img src="/uploads/doctors/photos/portrait.webp" alt="Специалист клиники Glow Dental">
+        <span class="spark s1">✦</span>
+        <span class="spark s2">✦</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="wrap about-grid">
+      <div class="about-figure">
+        <img src="/uploads/doctors/photos/lounge.webp" alt="Зона ожидания Glow Dental">
+      </div>
+      <div class="about-copy">
+        <div class="section-head" style="margin-bottom:0;">
+          <div class="kicker">О клинике</div>
+          <h2>Стоматология, где не страшно</h2>
+        </div>
+        <p style="margin-top:24px;">Мы построили Glow Dental вокруг одной идеи: визит к стоматологу может быть спокойным. Врачи подробно объясняют каждый шаг лечения, отвечают на вопросы и работают так, чтобы даже пациенты с многолетним страхом перед креслом чувствовали себя в безопасности.</p>
+        <div class="rating-strip">
+          <div class="rating-item"><div class="num">4,9</div><div class="label">средняя оценка</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Услуги</div>
+        <h2>Полный цикл лечения — в одной клинике</h2>
+        <p>От профилактики до сложной хирургии: подберём план лечения индивидуально и объясним каждый шаг заранее.</p>
+      </div>
+      <div class="service-list">
+        <div class="service-row">
+          <h3>Терапия и гигиена</h3>
+          <p>Лечение кариеса, пломбирование, профессиональная чистка полости рта, лечение дёсен и корневых каналов.</p>
+        </div>
+        <div class="service-row">
+          <h3>Эстетическая стоматология</h3>
+          <p>Отбеливание системой Flash, виниры и люминиры, реставрация формы и цвета зубов.</p>
+        </div>
+        <div class="service-row">
+          <h3>Ортопедия и протезирование</h3>
+          <p>Коронки, протезирование, ремонт зубных протезов — восстановление зубов с сохранением естественной анатомии.</p>
+        </div>
+        <div class="service-row">
+          <h3>Хирургия и имплантология</h3>
+          <p>Имплантация зубов, удаление, костная пластика, лечение кисты — без боли и лишней тревоги.</p>
+        </div>
+        <div class="service-row">
+          <h3>Эндодонтия и пародонтология</h3>
+          <p>Лечение каналов и периодонтита — сохраняем собственные зубы там, где это возможно.</p>
+        </div>
+        <div class="service-row">
+          <h3>Диагностика</h3>
+          <p>Рентгенография и цифровая стоматология CAD/CAM для точного планирования лечения.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <div class="gallery-break">
+    <img src="/uploads/doctors/photos/tools.png" alt="Стерильные инструменты Glow Dental">
+    <img src="/uploads/doctors/photos/cards.webp" alt="Фирменный стиль Glow Dental">
+  </div>
+
+  <!-- TEAM -->
+  <section id="team">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Команда</div>
+        <h2>Врачи, к которым возвращаются годами</h2>
+        <p>В клинике работают гигиенисты, терапевты, ортопеды, имплантологи и хирурги — на каждом этапе лечения пациента ведёт профильный специалист.</p>
+      </div>
+      <div class="team-grid">
+        <div class="doctor-card" th:each="doctor : ${doctors}">
+          <div class="doctor-photo">
+            <img th:src="${doctor.photoUrl}" th:alt="${doctor.fullName}">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews" id="reviews" data-yandex-org-id="4879068984">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Отзывы</div>
+        <h2>Что говорят пациенты</h2>
+        <p>Реальные отзывы с Яндекс Карт.</p>
+      </div>
+      <!-- Виджет отзывов Яндекс Карт. Чтобы включить — впишите ID организации
+           в атрибут data-yandex-org-id у секции выше (Яндекс Карты → карточка клиники →
+           «Поделиться» → «Виджет с отзывами»). Пока ID пуст, показываются отзывы ниже. -->
+      <div class="reviews-widget"></div>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="quote">«Прекрасная стоматология,где работают профессионалы своего дела,всегда ответят на все вопросы,помогут и выручат ваши зубы! В этой клинике я давно и мои знакомые лечат зубки тоже,недавно вырывала зубы мудрости без боли и быстро! Всем советую данное место!
+
+            Отдельное спасибо моему доктору Арине Николаевне,я с ней уже лет 5! Лучший специалист и любимый🫂🥹🫵🏻»</div>
+          <div class="author">Полина О. <span>· Яндекс Карты</span></div>
+        </div>
+        <div class="review-card">
+          <div class="quote">«Хочу выразить благодарность клинике за чудесный коллектив! Особенно хочу отметить Алину Сергеевну и её ассистента Камо — они бережно и трепетно относятся к клиентам. Качественно, быстро и красиво. Раньше я боялся стоматологов как огня, теперь иду к ним как на праздник.»</div>
+          <div class="author">Дария Т. <span>· Яндекс Карты</span></div>
+        </div>
+        <div class="review-card">
+          <div class="quote">«Замечательная стоматология в центре города, я очень боюсь стоматологов, и был негативный опыт в прошлом относительно тревоги и спокойствия во время лечения, я очень рада, что попала именно сюда к Арине Николаевне, все прошло безболезненно и безопасно для моего беспокойного состояния. Зубик как новенький, очень приятный тактильно, полностью соответствует анатомии моих. Это для меня прям вау❤️❤️❤️»</div>
+          <div class="author">Зоя Р. <span>· Яндекс Карты</span></div>
+        </div>
+      </div>
+      <div class="review-badges">
+        <div>
+          <div class="num">4,9 из 5</div>
+          <div class="label">средний рейтинг на Яндекс Картах</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICES
+       Цены — ЗАПОЛНИТЬ. Полный прейскурант (скан с подписью и печатью, с кодами услуг
+       по Номенклатуре) положите в /uploads/docs/preiskurant.pdf -->
+  <section class="prices" id="prices">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Цены</div>
+        <h2>Стоимость основных услуг</h2>
+        <p>Точную стоимость лечения врач называет после осмотра и составления плана лечения.</p>
+      </div>
+      <table class="price-table">
+        <thead><tr><th>Услуга</th><th>Цена, ₽</th></tr></thead>
+        <tbody>
+          <tr><td>Приём (осмотр, консультация) врача-стоматолога первичный</td><td class="price">[цена]</td></tr>
+          <tr><td>Профессиональная гигиена полости рта и зубов</td><td class="price">[цена]</td></tr>
+          <tr><td>Восстановление зуба пломбой из фотополимерного материала</td><td class="price">от [цена]</td></tr>
+          <tr><td>Профессиональное отбеливание зубов</td><td class="price">[цена]</td></tr>
+          <tr><td>Удаление постоянного зуба</td><td class="price">от [цена]</td></tr>
+          <tr><td>Восстановление зуба коронкой</td><td class="price">от [цена]</td></tr>
+          <tr><td>Внутрикостная дентальная имплантация</td><td class="price">от [цена]</td></tr>
+        </tbody>
+      </table>
+      <p class="price-note"><a href="/uploads/docs/preiskurant.pdf" target="_blank" rel="noopener">Полный прейскурант (PDF)</a></p>
+    </div>
+  </section>
+
+  <!-- CONTACTS -->
+  <section class="contact" id="contacts">
+    <div class="wrap contact-grid">
+      <div>
+        <h2>Сияй ярче,<br>улыбайся смелее</h2>
+        <p class="lead">Запишитесь через Telegram-бота или позвоните — расскажем, как проходит лечение, и подберём удобное время.</p>
+        <div class="contact-links">
+          <a href="https://t.me/glowdentalbot" class="contact-link js-tg" target="_blank" rel="noopener">
+            <span class="v">Записаться через Telegram-бота</span>
+            <span class="k">→</span>
+          </a>
+          <a href="tel:+79613260627" class="contact-link">
+            <span class="v">Позвонить</span>
+            <span class="k">→</span>
+          </a>
+          <a href="https://t.me/glowdentalbot" class="contact-link js-tg" target="_blank" rel="noopener">
+            <span class="v">Telegram</span>
+            <span class="k">→</span>
+          </a>
+          <a href="https://www.instagram.com/glow__dental/" class="contact-link" target="_blank" rel="noopener">
+            <span class="v">Instagram</span>
+            <span class="k">→</span>
+          </a>
+        </div>
+      </div>
+      <div class="contact-info">
+        <div class="row">
+          <div class="k">Адрес</div>
+          <div class="v">Ростов-на-Дону, ул. Большая Садовая, 66/37</div>
+        </div>
+        <div class="row">
+          <div class="k">Режим работы</div>
+          <div class="v">Ежедневно, по предварительной записи</div>
+        </div>
+        <div class="row">
+          <div class="k">Рейтинг</div>
+          <div class="v">4,9 ★ на Яндекс Картах</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="info">
+  <div class="wrap">
+    <div class="footer-row">
+      <div class="logomark on-dark">
+        <img src="/uploads/doctors/photos/brand/logo-mark-cream.png" alt="Glow Dental" width="30" height="37">
+        <span>Glow Dental</span>
+      </div>
+      <div class="tag">Сияй ярче, улыбайся смелее</div>
+    </div>
+
+    <!-- Информация для пациентов (обязательные сведения медорганизации).
+         Всё в квадратных скобках [ ... ] — ЗАПОЛНИТЬ. Документы — в /uploads/docs/ -->
+    <div class="footer-info">
+
+      <div>
+        <h4>Медицинская организация</h4>
+        <p><b>[ООО «…»]</b><br>
+          ИНН [0000000000], ОГРН [0000000000000], КПП [000000000]<br>
+          Юр. адрес: [индекс], г. Ростов-на-Дону, [улица, дом, помещение]<br>
+          Адрес клиники: г. Ростов-на-Дону, ул. Большая Садовая, 66/37<br>
+          Режим работы: [пн–вс 09:00–21:00]</p>
+        <p>Лицензия № [Л041-00000-00/00000000] от [дата] — <a href="/uploads/docs/license.pdf" target="_blank" rel="noopener">выписка из реестра</a></p>
+        <p>Генеральный директор — [ФИО]<br>Главный врач — [ФИО]<br>
+          <a href="tel:+79613260627">+7 (961) 326-06-27</a> · <a href="mailto:[e-mail]">[e-mail]</a></p>
+        <details>
+          <summary>График приёма граждан руководством</summary>
+          <div>
+            Генеральный директор [ФИО] — [дни и часы], тел. [телефон], e-mail [e-mail]<br>
+            Главный врач [ФИО] — [дни и часы], тел. [телефон], e-mail [e-mail]
+          </div>
+        </details>
+      </div>
+
+      <div>
+        <h4>Пациентам</h4>
+        <ul>
+          <li><details>
+            <summary>Правила записи и сроки ожидания</summary>
+            <div>Записаться на приём можно по телефону <a href="tel:+79613260627">+7 (961) 326-06-27</a> или через Telegram-бота <a href="https://t.me/glowdentalbot" class="js-tg" target="_blank" rel="noopener">@glowdentalbot</a>. Услуги оказываются в день обращения при наличии свободных специалистов и технической возможности или в заранее согласованные с пациентом день и время.</div>
+          </details></li>
+          <li><a href="/uploads/docs/preiskurant.pdf" target="_blank" rel="noopener">Прейскурант</a></li>
+          <li><a href="/uploads/docs/dogovor.pdf" target="_blank" rel="noopener">Образец договора на платные медицинские услуги</a></li>
+          <li><a href="/uploads/docs/pravila-vnutrennego-rasporyadka.pdf" target="_blank" rel="noopener">Правила внутреннего распорядка</a></li>
+          <li><a href="/uploads/docs/vrachi.pdf" target="_blank" rel="noopener">Сведения о врачах и график работы</a></li>
+          <li><details>
+            <summary>Вакансии</summary>
+            <div>В настоящее время открытых вакансий нет.</div>
+          </details></li>
+          <li><a href="http://pravo.gov.ru/proxy/ips/?docbody=&amp;nd=102152259" target="_blank" rel="noopener">Права и обязанности граждан в сфере охраны здоровья</a></li>
+          <li><a href="http://publication.pravo.gov.ru/Document/View/0001202305120025" target="_blank" rel="noopener">Правила предоставления платных медицинских услуг</a></li>
+          <li><a href="http://pravo.gov.ru/" target="_blank" rel="noopener">Официальный интернет-портал правовой информации</a></li>
+          <li><a href="https://cr.minzdrav.gov.ru/" target="_blank" rel="noopener">Рубрикатор клинических рекомендаций Минздрава России</a></li>
+          <li><a href="https://static-0.minzdrav.gov.ru/system/attachments/attaches/000/045/731/original/Памятка_для_граждан_о_гарантиях_бесплатного_оказания_медицинской_помощи.pdf?1562693046" target="_blank" rel="noopener">Гарантии бесплатного оказания медицинской помощи</a></li>
+          <li><a href="http://publication.pravo.gov.ru/Document/View/0001201910150005" target="_blank" rel="noopener">Перечень ЖНВЛП</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Контролирующие органы</h4>
+        <div class="org"><a href="https://minzdrav.donland.ru/" target="_blank" rel="noopener">Министерство здравоохранения Ростовской области</a><br>
+          344029, г. Ростов-на-Дону, ул. 1-й Конной Армии, 33<br>тел. +7 (863) 242-41-09</div>
+        <div class="org"><a href="https://61reg.roszdravnadzor.gov.ru/" target="_blank" rel="noopener">Территориальный орган Росздравнадзора по Ростовской области</a><br>
+          344037, г. Ростов-на-Дону, ул. Ченцова, 71в/63в<br>тел. +7 (863) 286-98-16</div>
+        <div class="org"><a href="https://61.rospotrebnadzor.ru/" target="_blank" rel="noopener">Управление Роспотребнадзора по Ростовской области</a><br>
+          г. Ростов-на-Дону, ул. 18-я Линия, 17<br>тел. +7 (863) 251-05-92</div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Glow Dental · Ростов-на-Дону</span>
+      <span><a href="/uploads/docs/privacy-policy.pdf" target="_blank" rel="noopener">Политика конфиденциальности</a> · <a href="/uploads/docs/pd-consent.pdf" target="_blank" rel="noopener">Согласие на обработку персональных данных</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- Окно записи: согласие на обработку ПД появляется при переходе к боту -->
+<div class="modal" id="tg-modal" role="dialog" aria-modal="true" aria-labelledby="tg-modal-title">
+  <div class="modal-card">
+    <button class="modal-close" type="button" aria-label="Закрыть">&times;</button>
+    <h3 id="tg-modal-title">Запись в Telegram</h3>
+    <p>Бот поможет выбрать врача и удобное время приёма.</p>
+    <label class="consent">
+      <input type="checkbox" id="tg-consent">
+      <span>Я соглашаюсь на <a href="/uploads/docs/pd-consent.pdf" target="_blank" rel="noopener">обработку персональных данных</a> в соответствии с <a href="/uploads/docs/privacy-policy.pdf" target="_blank" rel="noopener">политикой конфиденциальности</a></span>
+    </label>
+    <button class="btn btn-solid" type="button" id="tg-go" disabled>Перейти в Telegram</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    /* --- Запись: сначала согласие на обработку ПД, потом переход в бота --- */
+    var modal = document.getElementById('tg-modal');
+    var box = document.getElementById('tg-consent');
+    var go = document.getElementById('tg-go');
+    var target = 'https://t.me/glowdentalbot';
+    function open(href) {
+      target = href || target;
+      box.checked = false; go.disabled = true;
+      modal.classList.add('open');
+      box.focus();
+    }
+    function close() { modal.classList.remove('open'); }
+    document.querySelectorAll('.js-tg').forEach(function (a) {
+      a.addEventListener('click', function (e) { e.preventDefault(); open(a.getAttribute('href')); });
+    });
+    box.addEventListener('change', function () { go.disabled = !box.checked; });
+    go.addEventListener('click', function () {
+      if (!box.checked) return;
+      window.open(target, '_blank', 'noopener');
+      close();
+    });
+    modal.querySelector('.modal-close').addEventListener('click', close);
+    modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+    /* --- Отзывы: виджет Яндекс Карт, если задан ID организации --- */
+    var rv = document.getElementById('reviews');
+    var orgId = (rv.getAttribute('data-yandex-org-id') || '').trim();
+    if (orgId) {
+      var f = document.createElement('iframe');
+      f.src = 'https://yandex.ru/maps-reviews-widget/' + encodeURIComponent(orgId) + '?comments';
+      f.title = 'Отзывы о Glow Dental на Яндекс Картах';
+      f.loading = 'lazy';
+      rv.querySelector('.reviews-widget').appendChild(f);
+      rv.classList.add('has-widget');
+    }
+  })();
+</script>
+
+</body>
+</html>

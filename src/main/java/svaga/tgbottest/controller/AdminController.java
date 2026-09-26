@@ -64,6 +64,12 @@ public class AdminController {
         return "doctors";
     }
 
+    @GetMapping("/visit")
+    public String showVisit(Model model) {
+        model.addAttribute("doctors", doctorRepository.findAllByOrderByFullNameAsc());
+        return "visit";
+    }
+
     @PostMapping("/doctors")
     public String createDoctor(
             @RequestParam String fullName,
