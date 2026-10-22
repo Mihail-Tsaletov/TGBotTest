@@ -308,6 +308,24 @@
       .price-table tr{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:16px 0;border-bottom:1px solid rgba(48,60,48,0.14);}
       .price-table td{border:none;padding:0;}
     }
+    .price-table .code{display:block;margin-top:4px;font-size:12px;color:var(--accent-soft);letter-spacing:.02em;}
+
+    /* полный прейскурант — разделы раскрываются по клику */
+    .price-full{margin-top:64px;border-top:1px solid rgba(48,60,48,0.25);}
+    .price-full h3{font-size:clamp(24px,3vw,32px);margin:40px 0 18px;}
+    .price-full details{border-bottom:1px solid rgba(48,60,48,0.14);}
+    .price-full summary{
+      display:flex;align-items:center;gap:12px;padding:20px 0;cursor:pointer;list-style:none;
+      font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--green-deep);
+    }
+    .price-full summary::-webkit-details-marker{display:none;}
+    .price-full summary::before{content:"+";flex:none;width:22px;font-family:'Montserrat',sans-serif;font-size:18px;color:var(--accent);}
+    .price-full details[open] summary::before{content:"−";}
+    .price-full summary span{margin-left:auto;font-family:'Montserrat',sans-serif;font-size:12px;color:var(--ink-soft);}
+    .price-full .price-table{margin-bottom:24px;font-size:14px;}
+    .price-full .price-table td{padding:14px 12px 14px 0;}
+    .price-full .price-table .price{font-size:19px;}
+    @media(max-width:640px){.price-full .price-table td{padding:0;}}
     .price-note{margin-top:22px;font-size:13px;color:var(--ink-soft);max-width:70ch;}
     .price-note a{color:var(--green-deep);text-decoration:underline;text-underline-offset:2px;}
 
@@ -539,27 +557,234 @@
   </section>
 
   <!-- PRICES
-       Цены — ЗАПОЛНИТЬ. Полный прейскурант (скан с подписью и печатью, с кодами услуг
-       по Номенклатуре) положите в /uploads/docs/preiskurant.pdf -->
+       Цены — по прейскуранту, действующему с 20.01.2026 (коды — по Номенклатуре
+       медицинских услуг, приказ Минздрава № 804н). Скан с подписью и печатью
+       положите в /uploads/docs/preiskurant.pdf -->
   <section class="prices" id="prices">
     <div class="wrap">
       <div class="section-head">
         <div class="kicker">Цены</div>
         <h2>Стоимость основных услуг</h2>
-        <p>Точную стоимость лечения врач называет после осмотра и составления плана лечения.</p>
+        <p>Цены действительны с 20 января 2026 года. Точную стоимость лечения врач называет после осмотра и составления плана лечения.</p>
       </div>
       <table class="price-table">
         <thead><tr><th>Услуга</th><th>Цена, ₽</th></tr></thead>
         <tbody>
-          <tr><td>Приём (осмотр, консультация) врача-стоматолога первичный</td><td class="price">[цена]</td></tr>
-          <tr><td>Профессиональная гигиена полости рта и зубов</td><td class="price">[цена]</td></tr>
-          <tr><td>Восстановление зуба пломбой из фотополимерного материала</td><td class="price">от [цена]</td></tr>
-          <tr><td>Профессиональное отбеливание зубов</td><td class="price">[цена]</td></tr>
-          <tr><td>Удаление постоянного зуба</td><td class="price">от [цена]</td></tr>
-          <tr><td>Восстановление зуба коронкой</td><td class="price">от [цена]</td></tr>
-          <tr><td>Внутрикостная дентальная имплантация</td><td class="price">от [цена]</td></tr>
+          <tr><td>Приём (осмотр, консультация) врача-стоматолога первичный</td><td class="price">1 000</td></tr>
+          <tr><td>Комплексная профессиональная гигиена полости рта</td><td class="price">5 000</td></tr>
+          <tr><td>Восстановление зуба пломбой из фотополимерного материала</td><td class="price">от 3 500</td></tr>
+          <tr><td>Профессиональное отбеливание зубов системой Flash</td><td class="price">35 000</td></tr>
+          <tr><td>Удаление постоянного зуба</td><td class="price">от 5 000</td></tr>
+          <tr><td>Коронка на основе диоксида циркония</td><td class="price">от 20 000</td></tr>
+          <tr><td>Имплантация в области одного зуба</td><td class="price">от 35 000</td></tr>
         </tbody>
       </table>
+      <div class="price-full">
+        <h3>Полный прейскурант</h3>
+        <details>
+          <summary>Приём и консультации<span>6</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Приём (осмотр, консультация) врача-стоматолога первичный<span class="code">B01.065.007</span></td><td class="price">1 000</td></tr>
+              <tr><td>Приём (осмотр, консультация) врача-стоматолога повторный<span class="code">B01.065.008</span></td><td class="price">700</td></tr>
+              <tr><td>Приём (осмотр, консультация) врача-стоматолога-ортопеда первичный<span class="code">B01.066.001</span></td><td class="price">1 000</td></tr>
+              <tr><td>Приём (осмотр, консультация) врача-стоматолога-ортопеда повторный<span class="code">B01.066.002</span></td><td class="price">700</td></tr>
+              <tr><td>Приём (осмотр, консультация) врача-стоматолога-хирурга первичный<span class="code">B01.067.001</span></td><td class="price">1 000</td></tr>
+              <tr><td>Приём (осмотр, консультация) врача-стоматолога-хирурга повторный<span class="code">B01.067.002</span></td><td class="price">700</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Профилактика и гигиена<span>9</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Комплексная профессиональная гигиена полости рта с последующей консультацией и осмотром полости рта (включает в себя ультразвуковую чистку всех зубов, AIR FLOW, полировка щеткой пастой и специальными резинками, глубокая реминерализация с использованием каппы с реминерализирующим гелем кальция и фтор)<span class="code">А16.07.025.004</span></td><td class="price">5 000</td></tr>
+              <tr><td>Поддерживающая профессиональная гигиена полости рта (выполняется при условии, если предыдущая профессиональная гигиена была выполнена не более 3х месяцев назад в клинике «Glow Dental»)<span class="code">А16.07.025.005</span></td><td class="price">3 000</td></tr>
+              <tr><td>Профессиональная гигиена полости рта под увеличением (включает в себя у/з чистку зубов, AIR FLOW и полировка щеткой пастой, аппликацию рем гелем для укрепления зубов)<span class="code">А16.07.025.006</span></td><td class="price">6 500</td></tr>
+              <tr><td>Профессиональная гигиена полости рта для пациентов с композитными или керамическими винирами (включает в себя ультразвуковую чистку зубов, на которых есть камень, Air Flow зубов специальным мелкодисперсным неабразивным песком для виниров (этот песок не царапает поверхность виниров, а наоборот делает их гладкими и придаёт блеск), полировка щеткой, пастой и специальными резинками, рем терапия с гелем кальция и фтора, осмотр виниров и всех зубов)<span class="code">А16.07.025.007</span></td><td class="price">6 000</td></tr>
+              <tr><td>Профессиональная гигиена «Антитабак» (предназначена для людей с плотным пигментированным налётом, вызванным курением, употреблением чая, кофе. Включает в себя уз чистку с использованием специального геля для размягчения данного налёта, Air Flow всех зубов, тщательная полировка щетками, пастами, полировочными резинками и покрытие реминерализирующим гелем)<span class="code">А16.07.025.008</span></td><td class="price">5 500</td></tr>
+              <tr><td>Глубокое фторирование эмали зуба<span class="code">А11.07.012</span></td><td class="price">300</td></tr>
+              <tr><td>Ультразвуковое удаление наддесневых и поддесневых зубных отложений в области зуба (1 зуб)<span class="code">А22.07.002</span></td><td class="price">200</td></tr>
+              <tr><td>Избирательное полирование зуба с применением «Полирен/Detartrine/ПолирПастZ» (1 зуб)<span class="code">А16.07.025.001</span></td><td class="price">200</td></tr>
+              <tr><td>Инъекционное введение лекарственных препаратов в челюстно-лицевую область (с применением ТРАУМЕЛЬ)<span class="code">А11.07.011</span></td><td class="price">500</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Лечение кариеса и реставрации<span>9</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Восстановление зуба пломбой I, V, VI класс по Блэку с использованием материалов (SDR, Vitremer) из фотополимеров (минимальная детализация, первичная анатомия, 1 цветовой оттенок композита)<span class="code">А16.07.002.100</span></td><td class="price">3 500</td></tr>
+              <tr><td>Восстановление зуба пломбой с применением материала из фотополимеров (до 30% зуба)<span class="code">А16.07.002.101</span></td><td class="price">6 000</td></tr>
+              <tr><td>Восстановление зуба пломбой с применением материала из фотополимеров (до 50% зуба)<span class="code">А16.07.002.102</span></td><td class="price">7 000</td></tr>
+              <tr><td>Восстановление зуба пломбой с применением материала из фотополимеров (более 50%)<span class="code">А16.07.002.103</span></td><td class="price">8 000</td></tr>
+              <tr><td>Художественная реставрация зуба пломбой (максимальная детализация, цветовая индивидуализация)<span class="code">А16.07.002.104</span></td><td class="price">9 000</td></tr>
+              <tr><td>Изготовление накладки с индивидуализацией композитным материалом(моделировка в лаборатории (1 ед.)<span class="code">А16.07.002.106</span></td><td class="price">15 000</td></tr>
+              <tr><td>Композитный винир в индивидуальном исполнении<span class="code">А16.07.002.105</span></td><td class="price">15 000</td></tr>
+              <tr><td>Адгезивный мост с использованием материалов из фотополимеров<span class="code">А16.07.004.023</span></td><td class="price">15 000</td></tr>
+              <tr><td>Повторная шлифовка и полировка реставраций, изготовленных в другой клинике<span class="code">А16.07.025.003</span></td><td class="price">2 000</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Эндодонтическое лечение<span>16</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Наложение временной пломбы (Дентин-паста и аналоги)<span class="code">А16.07.002.009</span></td><td class="price">1 000</td></tr>
+              <tr><td>Наложение девитализирующей пасты<span class="code">А11.07.027</span></td><td class="price">1 000</td></tr>
+              <tr><td>Инструментальная и медикаментозная обработка хорошо проходимого канала<span class="code">А16.07.030.001</span></td><td class="price">2 000</td></tr>
+              <tr><td>Инструментальная и медикаментозная обработка трудно проходимого канала (склерозированного, искривленного)<span class="code">А16.07.030.002</span></td><td class="price">2 500</td></tr>
+              <tr><td>Инструментальная и медикаментозная обработка хорошо проходимого канала ПОД УВЕЛИЧЕНИЕМ<span class="code">А16.07.030.003</span></td><td class="price">2 500</td></tr>
+              <tr><td>Инструментальная и медикаментозная обработка трудно проходимого канала (склерозированного, искривленного) ПОД УВЕЛИЧЕНИЕМ<span class="code">А16.07.030.004</span></td><td class="price">3 000</td></tr>
+              <tr><td>Распломбировка корневого канала зуба, ранее леченного пастой (1 канал)<span class="code">А16.07.082.001</span></td><td class="price">3 000</td></tr>
+              <tr><td>Распломбировка одного корневого канала ранее леченного фосфат-цементом (резорцин-формальдегидным методом) (1 канал)<span class="code">А16.07.082.002</span></td><td class="price">3 500</td></tr>
+              <tr><td>Пломбирование корневого канала зуба ЭПОКСИДНЫМ СИЛЕРОМ И ГУТТАПЕРЧЕЙ<span class="code">А16.07.008.001</span></td><td class="price">2 000</td></tr>
+              <tr><td>Пломбирование корневого канала зуба ПОД УВЕЛИЧЕНИЕМ ЭПОКСИДНЫМ СИЛЕРОМ И ГУТТАПЕРЧЕЙ<span class="code">А16.07.008.002</span></td><td class="price">2 500</td></tr>
+              <tr><td>Закрытие перфорации стенки корневого канала зуба (с применением МТА) (1 канал)<span class="code">А16.07.008.003</span></td><td class="price">6 000</td></tr>
+              <tr><td>Временное пломбирование лекарственным препаратом корневого канала (1 КАНАЛ)<span class="code">А16.07.030.005</span></td><td class="price">1 000</td></tr>
+              <tr><td>Удаление внутриканального штифта/вкладки (1 канал)<span class="code">А16.07.094.001</span></td><td class="price">5 000</td></tr>
+              <tr><td>Удаление фрагмента инструмента из корневого канала (с использованием бинокуляров)<span class="code">А16.07.094.002</span></td><td class="price">6 000</td></tr>
+              <tr><td>Восстановление зуба под ортопедическую конструкцию<span class="code">А16.07.002.106</span></td><td class="price">14 000</td></tr>
+              <tr><td>Фиксация внутриканального стекловолоконного штифта (Форма) на цемент двойного отверждения (1 ед.)<span class="code">А16.07.093.001</span></td><td class="price">3 000</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Шинирование зубов<span>2</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Временное шинирование при заболеваниях пародонта. Однорядное шинирование 6-х зубов<span class="code">А16.07.019.001</span></td><td class="price">8 000</td></tr>
+              <tr><td>Временное шинирование при заболеваниях пародонта 1-3 зуба<span class="code">А16.07.019.002</span></td><td class="price">6 000</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Отбеливание<span>2</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Отбеливание системой Flash и реминерализующая терапия<span class="code">А16.07.050.001</span></td><td class="price">35 000</td></tr>
+              <tr><td>Отбеливание системой Flash одного зуба и рем.терапия<span class="code">А16.07.050.002</span></td><td class="price">3 500</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Удаление зубов<span>7</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Удаление ретинированного зуба 1 СТЕПЕНИ СЛОЖНОСТИ<span class="code">А16.07.024</span></td><td class="price">8 000</td></tr>
+              <tr><td>Удаление ретинированного зуба 2 СТЕПЕНИ СЛОЖНОСТИ<span class="code">А16.07.024.001</span></td><td class="price">10 000</td></tr>
+              <tr><td>Удаление молочного зуба<span class="code">А16.07.001.001</span></td><td class="price">2 000</td></tr>
+              <tr><td>Удаление постоянного зуба ПРОСТОЕ<span class="code">А16.07.001.002</span></td><td class="price">5 000</td></tr>
+              <tr><td>Удаление доброкачественного новообразования мягких тканей полости рта (папиллома, фиброма и т. п.)1 шт<span class="code">А16.07.058.001</span></td><td class="price">2 000</td></tr>
+              <tr><td>Обработка лунки зуба, ранее удаленного в другой клинике<span class="code">А16.07.013.001</span></td><td class="price">5 000</td></tr>
+              <tr><td>Лечение перикоронита (промывание, рассечение и/или иссечение капюшона)<span class="code">А16.07.058</span></td><td class="price">5 000</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Имплантация и костная пластика<span>10</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Имплантация в области 1 зуба (системой G-Diff или DIO)<span class="code">А16.07.054.001</span></td><td class="price">35 000</td></tr>
+              <tr><td>Имплантация в области 1 зуба (системой ANY ONE)<span class="code">А16.07.054.002</span></td><td class="price">45 000</td></tr>
+              <tr><td>Имплантация в области 1 зуба (системой Straumann)<span class="code">А16.07.054.003</span></td><td class="price">95 000</td></tr>
+              <tr><td>Синус-лифтинг (открытый) в области 1-2 зубов<span class="code">А16.07.055.001</span></td><td class="price">35 000</td></tr>
+              <tr><td>Синус-лифтинг (открытый) в области 1-2 зубов С КОСТЬЮ<span class="code">А16.07.055.002</span></td><td class="price">50 000</td></tr>
+              <tr><td>Синус-лифтинг (закрытый) в области 1 зуба<span class="code">А16.07.055.003</span></td><td class="price">20 000</td></tr>
+              <tr><td>Синус-лифтинг (открытый) ОДНА СТОРОНА<span class="code">А16.07.055.004</span></td><td class="price">70 000</td></tr>
+              <tr><td>Синус-лифтинг (открытый) ОДНА СТОРОНА С КОСТЬЮ<span class="code">А16.07.055.005</span></td><td class="price">80 000</td></tr>
+              <tr><td>Пластика перфорации верхнечелюстной пазухи<span class="code">А16.07.096</span></td><td class="price">15 000</td></tr>
+              <tr><td>Пластика мягкотканная в области одного импланта<span class="code">А16.07.017.002.001</span></td><td class="price">15 000</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Пародонтология и хирургия<span>14</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Костная пластика ОДНА СТОРОНА с костью<span class="code">А16.07.055.006</span></td><td class="price">50 000</td></tr>
+              <tr><td>Костная пластика ОДНА СТОРОНА БЕЗ КОСТНОГО МАТЕРИАЛА<span class="code">А16.07.055.007</span></td><td class="price">30 000</td></tr>
+              <tr><td>Коррекция уздечки губы<span class="code">А16.07.044.001</span></td><td class="price">15 000</td></tr>
+              <tr><td>Коррекция уздечки языка<span class="code">А16.07.044.002</span></td><td class="price">15 000</td></tr>
+              <tr><td>Лоскутная операция в полости рта при заборе трансплантата с бугра верхней челюсти<span class="code">А16.07.040.001</span></td><td class="price">20 000</td></tr>
+              <tr><td>Лоскутная операция в полости рта при заборе трансплантата с нёба<span class="code">А16.07.040.002</span></td><td class="price">20 000</td></tr>
+              <tr><td>Вестибулопластика<span class="code">А16.07.045</span></td><td class="price">15 000</td></tr>
+              <tr><td>Вскрытие подслизистого или поднадкостничного очага воспаления в полости рта<span class="code">А16.07.011</span></td><td class="price">5 000</td></tr>
+              <tr><td>Вскрытие и дренирование одонтогенного абсцесса<span class="code">А16.07.012</span></td><td class="price">5 000</td></tr>
+              <tr><td>Открытый кюретаж при заболеваниях пародонта в области зуба<span class="code">А16.07.038</span></td><td class="price">6 000</td></tr>
+              <tr><td>Закрытый кюретаж при заболеваниях пародонта в области зуба<span class="code">А16.07.039</span></td><td class="price">5 000</td></tr>
+              <tr><td>Апикальная хирургия с костным материалом<span class="code">А16.07.007.001</span></td><td class="price">30 000</td></tr>
+              <tr><td>Апикальная хирургия БЕЗ костного материала<span class="code">А16.07.007.002</span></td><td class="price">20 000</td></tr>
+              <tr><td>Операция по закрытию рецессии с использованием субэпитэлиального лоскута (в области одного зуба)<span class="code">А16.07.017.003</span></td><td class="price">15 000</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Ортопедия: оттиски<span>7</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Снятие оттиска с одной челюсти альгинатной массой<span class="code">А02.07.010.010</span></td><td class="price">2 000</td></tr>
+              <tr><td>Снятие оттиска с одной челюсти с использованием С-силикона<span class="code">А02.07.010.011</span></td><td class="price">3 000</td></tr>
+              <tr><td>Снятие оттиска с одной челюсти с использованием трансфера и С-силикона<span class="code">А02.07.010.012</span></td><td class="price">3 500</td></tr>
+              <tr><td>Снятие оттиска с одной челюсти с использованием А-силикона<span class="code">А02.07.010.013</span></td><td class="price">3 500</td></tr>
+              <tr><td>Снятие оттиска с одной челюсти с использованием трансфера и А-силикона<span class="code">А02.07.010.014</span></td><td class="price">4 000</td></tr>
+              <tr><td>Снятие оттиска с одной челюсти индивидуальной ложкой с использованием коррегирующей массы С-силикона<span class="code">А02.07.010.015</span></td><td class="price">2 500</td></tr>
+              <tr><td>Снятие оттиска с одной челюсти индивидуальной ложкой с использованием коррегирующей массы А-силикона<span class="code">А02.07.010.016</span></td><td class="price">3 500</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Ортопедия: коронки и виниры<span>18</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Снятие несъемной ортопедической конструкции (штампованной коронки, 1 ед.)<span class="code">А16.07.053.001</span></td><td class="price">2 000</td></tr>
+              <tr><td>Снятие несъемной ортопедической конструкции (металлокерамической, цельнолитой/керамической) (1ед.)<span class="code">А16.07.053.003</span></td><td class="price">2 500</td></tr>
+              <tr><td>Фиксация на постоянный цемент несъемных ортопедических конструкций при помощи цемента(1 ед.)<span class="code">А16.07.049.001</span></td><td class="price">2 000</td></tr>
+              <tr><td>Фиксация на временный цемент (1 ед.)<span class="code">А16.07.049.002</span></td><td class="price">1 500</td></tr>
+              <tr><td>Фиксация на постоянный цемент двойного отверждения несъёмных ортопедических конструкций (1 ед.)<span class="code">А16.07.049.003</span></td><td class="price">3 000</td></tr>
+              <tr><td>Восстановление зуба коронкой временной прямым методом (1 ед.)<span class="code">А16.07.004.001</span></td><td class="price">2 500</td></tr>
+              <tr><td>Изготовление временной коронки на импланте (1 ед)<span class="code">А23.07.002.094</span></td><td class="price">10 000</td></tr>
+              <tr><td>Изготовление коронки временной (пластмассовой) (1 ед.) в лаборатории<span class="code">А23.07.002.100</span></td><td class="price">5 500</td></tr>
+              <tr><td>Изготовление коронки керамической на каркасе из диоксида циркония (1 ед.)<span class="code">А23.07.002.101</span></td><td class="price">20 000</td></tr>
+              <tr><td>Изготовление коронки на основе диоксида циркония с индивидуализацией (1 ед.)<span class="code">А23.07.002.102</span></td><td class="price">25 000</td></tr>
+              <tr><td>Изготовление коронки цельно-прессованной E.max Press (1 ед.)<span class="code">А23.07.002.103</span></td><td class="price">35 000</td></tr>
+              <tr><td>Изготовление коронки с индивидуализацией E.max Press (1 ед.)<span class="code">А23.07.002.104</span></td><td class="price">40 000</td></tr>
+              <tr><td>Изготовление накладки керамической (1 ед.)<span class="code">А23.07.002.105</span></td><td class="price">20 000</td></tr>
+              <tr><td>Изготовление коронки металлокерамической с индивидуальным абатментом на импланте (1 ед.)<span class="code">А23.07.002.106</span></td><td class="price">25 000</td></tr>
+              <tr><td>Изготовление коронки керамической с индивидуальным абатментом на импланте (1 ед.)<span class="code">А23.07.002.107</span></td><td class="price">30 000</td></tr>
+              <tr><td>Винир на основе диоксида циркония с индивидуализацией (1 ед.)<span class="code">А23.07.002.108</span></td><td class="price">35 000</td></tr>
+              <tr><td>Винир на основе E.max<span class="code">А23.07.002.109</span></td><td class="price">38 000</td></tr>
+              <tr><td>Винир на основе полевошпатной керамики с индивидуализацией (1 ед.)<span class="code">А23.07.002.110</span></td><td class="price">55 000</td></tr>
+            </tbody>
+          </table>
+        </details>
+        <details>
+          <summary>Ортопедия: протезы<span>19</span></summary>
+          <table class="price-table">
+            <tbody>
+              <tr><td>Изготовление диагностической модели с гипсовкой в артикуляр (1 ед.)<span class="code">А23.07.002.111</span></td><td class="price">5 000</td></tr>
+              <tr><td>Изготовление WAX AP (восковая моделировка) (1 ед.)<span class="code">А23.07.002.112</span></td><td class="price">3 000</td></tr>
+              <tr><td>Изготовление бюгеля с 2 аттачментами<span class="code">А23.07.002.113</span></td><td class="price">50 000</td></tr>
+              <tr><td>Изготовление бюгеля кламмерного (2 кламмера)<span class="code">А23.07.002.114</span></td><td class="price">45 000</td></tr>
+              <tr><td>Изготовление бюгеля кламмерного с фрезеровкой (2 фрезеровки) (1 ед.)<span class="code">А23.07.002.115</span></td><td class="price">40 000</td></tr>
+              <tr><td>Изготовление прикусного валика (воскового) (1 ед.)<span class="code">А23.07.002.116</span></td><td class="price">3 000</td></tr>
+              <tr><td>Изготовление индивидуальной ложки (1 ед.)<span class="code">А23.07.002.117</span></td><td class="price">3 000</td></tr>
+              <tr><td>Изготовление валика на жесткой основе (1 ед.)<span class="code">А23.07.002.118</span></td><td class="price">3 000</td></tr>
+              <tr><td>Изготовление съемного протеза (1 ед.)<span class="code">А23.07.002.119</span></td><td class="price">30 000</td></tr>
+              <tr><td>Изготовление съемного протеза с армированием (1 ед.)<span class="code">А23.07.002.120</span></td><td class="price">35 000</td></tr>
+              <tr><td>Изготовление съемного протеза с армированием (литые кламмеры — 2 шт) (1 ед.)<span class="code">А23.07.002.121</span></td><td class="price">35 000</td></tr>
+              <tr><td>Изготовление бабочки (1 ед.)<span class="code">А23.07.002.122</span></td><td class="price">14 000</td></tr>
+              <tr><td>Изготовление съемного нейлонового протеза (Акрифри пресс пластмасса) (1 ед.)<span class="code">А23.07.002.123</span></td><td class="price">40 000</td></tr>
+              <tr><td>Починка съемного протеза (без гарантии) (1 ед.)<span class="code">А23.07.002.124</span></td><td class="price">7 000</td></tr>
+              <tr><td>Приварка одного зуба (1 ед.)<span class="code">А23.07.002.125</span></td><td class="price">5 000</td></tr>
+              <tr><td>Армирование протеза (1 ед.)<span class="code">А23.07.002.126</span></td><td class="price">10 000</td></tr>
+              <tr><td>Перебазировка протеза (1 ед.)<span class="code">А23.07.002.127</span></td><td class="price">10 000</td></tr>
+              <tr><td>Замена втулки аттачмента (bredent ВКС-ОЦ, ВКС-СГ) (1 ед.)<span class="code">А23.07.002.128</span></td><td class="price">5 000</td></tr>
+              <tr><td>Изготовление термопластичного протеза-ацеталь (1 ед.)<span class="code">А23.07.002.129</span></td><td class="price">45 000</td></tr>
+            </tbody>
+          </table>
+        </details>
+      </div>
       <p class="price-note"><a href="/uploads/docs/preiskurant.pdf" target="_blank" rel="noopener">Полный прейскурант (PDF)</a></p>
     </div>
   </section>
